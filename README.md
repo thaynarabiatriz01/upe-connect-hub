@@ -1,8 +1,8 @@
 # UPE Connect Hub
 
-<p align="center">
-  <img src="./assets/logo/logo.png" width="180"/>
-</p>
+<h1>
+    <img src= "https://ik.imagekit.io/tntyaifd8/upe-connect-hub">
+<h1>
 
 <h3 align="center">
 Conectando Talentos, Oportunidades e Desenvolvimento Acadêmico
@@ -14,303 +14,266 @@ Conectando Talentos, Oportunidades e Desenvolvimento Acadêmico
 
 ---
 
-# Sobre o Projeto
+# UPE Connect Hub
 
-O **UPE Connect Hub** é uma plataforma acadêmica desenvolvida para centralizar oportunidades, networking e desenvolvimento profissional dentro da Universidade de Pernambuco – Campus Garanhuns.
+## Plataforma Acadêmica de Oportunidades e Desenvolvimento Profissional
 
-A proposta do sistema é integrar estudantes, professores, coordenação e empresas parceiras em um único ambiente digital, facilitando a divulgação e o acesso a:
+### Sobre o Projeto
 
-- oportunidades acadêmicas
-- estágios
-- monitorias
-- bolsas
-- projetos de pesquisa
-- eventos
-- networking acadêmico
+O **UPE Connect Hub** é uma plataforma acadêmica desenvolvida como projeto da disciplina de Banco de Dados da Universidade de Pernambuco (UPE).
 
-O projeto busca resolver problemas de descentralização das informações acadêmicas e profissionais dentro da universidade.
+O sistema tem como objetivo centralizar a divulgação. O projeto consiste no desenvolvimento de um banco de dados relacional e uma interface simples para apoiar a gestão  de oportunidades acadêmicas e profissionais, permitindo que estudantes, professores, coordenação e empresas parceiras tenham acesso a um ambiente único para publicação e acompanhamento de vagas, eventos, bolsas, monitorias e projetos.
 
 ---
 
-# Objetivos
+## Problema
 
-## Objetivo Geral
+Atualmente, as oportunidades acadêmicas da universidade são divulgadas de forma descentralizada através de:
 
-Desenvolver uma plataforma acadêmica relacional capaz de conectar membros da universidade e ampliar o acesso a oportunidades acadêmicas e profissionais.
+* Grupos de WhatsApp;
+* E-mails institucionais;
+* Coordenação dos cursos;
+* Murais físicos;
+* Comunicação informal.
 
-## Objetivos Específicos
-
-- Centralizar divulgação de oportunidades
-- Facilitar candidaturas
-- Promover networking acadêmico
-- Organizar eventos e projetos
-- Gerar relatórios institucionais
-- Auxiliar no acompanhamento de empregabilidade
+Essa situação dificulta o acesso às informações e pode resultar na perda de oportunidades importantes por parte dos estudantes.
 
 ---
 
-# Funcionalidades
+## Solução Proposta
 
-## Perfil Acadêmico
+O UPE Connect Hub centraliza todas as oportunidades acadêmicas e profissionais em uma única plataforma, permitindo:
 
-- Cadastro de perfil acadêmico
-- Habilidades técnicas
-- Certificações
-- Projetos desenvolvidos
-- Portfólio
-- Currículo
-
-## Mural de Oportunidades
-
-- Estágios
-- Monitorias
-- Bolsas
-- Projetos de extensão
-- Projetos de pesquisa
-- Eventos acadêmicos
-
-## Sistema de Candidaturas
-
-- Envio de candidaturas
-- Acompanhamento de status
-- Feedback
-- Notificações
-
-## Networking Acadêmico
-
-- Conexões entre usuários
-- Comunidades
-- Grupos acadêmicos
-- Mensagens
-
-## Eventos Acadêmicos
-
-- Inscrições
-- Participações
-- Certificados
-- Histórico de eventos
-
-## Dashboard Institucional
-
-- Métricas acadêmicas
-- Relatórios
-- Indicadores institucionais
+* Cadastro de usuários;
+* Gerenciamento de competências;
+* Publicação de vagas;
+* Controle de candidaturas;
+* Gerenciamento de eventos;
+* Emissão de certificados;
+* Sistema de notificações;
+* Geração de relatórios institucionais.
 
 ---
 
-# Tecnologias Utilizadas
+## Objetivos
 
-## Banco de Dados
-- MySQL
+### Objetivo Geral
 
-## Backend
-- Python
-- Flask
+Desenvolver uma plataforma acadêmica que facilite o acesso a oportunidades e promova a integração entre universidade, estudantes e empresas parceiras.
 
-## Frontend
-- HTML
-- CSS
-- JavaScript
-- Bootstrap
+### Objetivos Específicos
 
-## Ferramentas
-- Git
-- GitHub
-- MySQL Workbench
-- Draw.io
-- Postman
+* Centralizar informações acadêmicas;
+* Facilitar candidaturas;
+* Organizar eventos institucionais;
+* Gerar relatórios gerenciais;
+* Melhorar o acompanhamento das oportunidades oferecidas pela universidade.
 
 ---
 
-# Estrutura do Projeto
+## Tecnologias Utilizadas
 
-```bash
-upe-connect-hub/
+### Banco de Dados
+
+* PostgreSQL
+
+### Linguagem de Programação
+
+* Python
+
+### Bibliotecas
+
+* psycopg2
+
+### Modelagem
+
+* BRModelo
+* Draw.io
+
+### Controle de Versão
+
+* Git
+* GitHub
+
+---
+
+## Estrutura do Projeto
+
+```text
+UPE-Connect-Hub/
 │
 ├── docs/
-├── database/
-├── backend/
-├── frontend/
-├── tests/
-├── assets/
-│
-├── README.md
-├── LICENSE
-├── .gitignore
-└── requirements.txt
+├── sql/
+├── app_teste/
+├── diagramas/
+├── seeders/
+├── apresentacao/
+└── README.md
 ```
 
 ---
 
-# Estrutura do Banco de Dados
+## Estrutura do Banco de Dados
 
-O sistema será dividido em módulos:
+O banco foi projetado seguindo os princípios de normalização até a Terceira Forma Normal (3FN).
 
-## Módulo 1 — Usuários
-- usuarios
-- perfis
-- cursos
-- departamentos
-- tipos_usuario
+### Módulo Usuários
 
-## Módulo 2 — Competências
-- habilidades
-- usuario_habilidades
-- certificacoes
-- usuario_certificacoes
+* usuarios
+* perfis
+* cursos
+* departamentos
+* tipos_usuario
 
-## Módulo 3 — Oportunidades
-- vagas
-- tipos_vaga
-- empresas
-- candidaturas
-- status_candidatura
+### Módulo Competências
 
-## Módulo 4 — Social
-- conexoes
-- mensagens
-- grupos
-- membros_grupo
-- postagens
-- comentarios
+* habilidades
+* usuario_habilidades
+* certificacoes
+* usuario_certificacoes
+* areas_interesse
+* usuario_areas_interesse
 
-## Módulo 5 — Acadêmico
-- projetos
-- eventos
-- participacoes
-- orientadores
+### Módulo Empresas
 
-## Módulo 6 — Controle
-- notificacoes
-- logs
-- auditoria
-- recomendacoes
+* empresas
+* representantes_empresa
 
----
+### Módulo Oportunidades
 
-# Recursos Avançados
+* tipos_vaga
+* vagas
+* requisitos_vaga
+* vaga_habilidades
 
-## Triggers
+### Módulo Candidaturas
 
-- Atualização automática de status de vagas
-- Registro de logs de candidaturas
-- Notificações automáticas
+* candidaturas
+* status_candidatura
+* feedback_candidatura
 
-## Procedures
+### Módulo Eventos
 
-- cadastrar_candidatura()
-- recomendar_vagas()
-- gerar_relatorio_empregabilidade()
+* eventos
+* participacoes
+* certificados
 
-## Views
+### Módulo Controle
 
-- vw_alunos_ativos
-- vw_vagas_abertas
-- vw_candidaturas_por_curso
-- vw_eventos_populares
+* notificacoes
+* logs
+* auditoria
+
+Total aproximado: **26 tabelas**
 
 ---
 
-# Status do Projeto
+## Funcionalidades
 
-🚧 Projeto em desenvolvimento.
+### Gestão de Usuários
 
-Atualmente nas fases de:
-- levantamento de requisitos
-- modelagem de banco de dados
-- documentação
-- arquitetura do sistema
+* Cadastro de usuários
+* Perfis acadêmicos
+* Associação com cursos
 
----
+### Gestão de Competências
 
-# Roadmap
+* Habilidades
+* Certificações
+* Áreas de interesse
 
-## Fase 1
-- Modelagem do banco
-- DER e MER
-- Normalização
+### Gestão de Empresas
 
-## Fase 2
-- Criação das tabelas
-- Procedures
-- Triggers
-- Views
+* Empresas parceiras
+* Representantes
 
-## Fase 3
-- Desenvolvimento da API
+### Gestão de Oportunidades
 
-## Fase 4
-- Desenvolvimento da interface
+* Cadastro de vagas
+* Requisitos
+* Habilidades exigidas
 
-## Fase 5
-- Dashboard institucional
-- Match inteligente
+### Gestão de Candidaturas
 
----
+* Inscrição em vagas
+* Acompanhamento de status
+* Feedback
 
-# Integrantes
+### Gestão de Eventos
 
-- Nome do Integrante — Função
-- Nome do Integrante — Função
-- Nome do Integrante — Função
-- Nome do Integrante — Função
+* Cadastro de eventos
+* Participações
+* Certificados
 
----
+### Sistema de Notificações
 
-# Documentação
-
-A documentação do projeto estará disponível na pasta:
-
-```bash
-/docs
-```
+* Novas vagas
+* Atualização de status
+* Avisos institucionais
 
 ---
 
-# Como Executar o Projeto
+## Recursos Avançados
 
-## Clone o repositório
+### Views
 
-```bash
-git clone https://github.com/seu-usuario/upe-connect-hub.git
-```
+* vw_vagas_abertas
+* vw_candidaturas_por_curso
+* vw_eventos_populares
+* vw_alunos_certificados
+* vw_habilidades_requisitadas
 
-## Acesse a pasta
+### Procedures
 
-```bash
-cd upe-connect-hub
-```
+* cadastrar_candidatura()
+* publicar_vaga()
+* gerar_relatorio_empregabilidade()
 
-## Instale as dependências
+### Triggers
 
-```bash
-pip install -r requirements.txt
-```
-
----
-
-# Diferenciais do Projeto
-
-✔ Rede social acadêmica institucional  
-✔ Centralização de oportunidades  
-✔ Sistema de recomendação inteligente  
-✔ Dashboard institucional  
-✔ Plataforma integrada para desenvolvimento acadêmico e profissional  
+* Registro automático de logs
+* Encerramento automático de vagas
+* Geração automática de notificações
 
 ---
 
-# Contribuição
+## Testes
 
-Este projeto está sendo desenvolvido para fins acadêmicos pela equipe responsável pelo UPE Connect Hub.
+O projeto possui uma aplicação simples em Python para validar o funcionamento do banco de dados, permitindo:
+
+* Cadastro de usuários;
+* Publicação de vagas;
+* Realização de candidaturas;
+* Consulta de relatórios;
+* Teste das procedures e triggers.
 
 ---
 
-# Licença
+## Integrantes
 
-Este projeto está sob a licença MIT.
+| Nome         | Responsabilidade              |
+| ------------ | ----------------------------- |
+| Integrante 1 | Requisitos e Documentação     |
+| Integrante 2 | Modelagem e Diagramas         |
+| Integrante 3 | Estrutura do Banco de Dados   |
+| Integrante 4 | Procedures, Triggers e Testes |
 
 ---
 
-# Universidade de Pernambuco
+## Disciplina
 
-Projeto acadêmico desenvolvido para a Universidade de Pernambuco — Campus Garanhuns.
+Banco de Dados
+
+Universidade de Pernambuco – Campus Garanhuns
+
+---
+
+## Professor
+
+Carlos Melo
+
+---
+
+## Licença
+
+Projeto desenvolvido exclusivamente para fins acadêmicos.
