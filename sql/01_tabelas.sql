@@ -37,6 +37,24 @@ CREATE TABLE usuarios (
         REFERENCES tipos_usuario(id_tipo_usuario)
 );
 
-CREATE TABLE perfis(
-    id_perfil SERIAL
+CREATE TABLE perfis (
+    id_perfil SERIAL PRIMARY KEY,
+
+    id_usuario INTEGER NOT NULL UNIQUE,
+
+    foto_perfil VARCHAR(255),
+    biografia TEXT,
+    periodo INTEGER CHECK (periodo > 0),
+    linkedin VARCHAR(255),
+    github VARCHAR(255),
+
+    id_curso INTEGER NOT NULL,
+
+    CONSTRAINT fk_perfil_usuario
+        FOREIGN KEY (id_usuario)
+        REFERENCES usuarios(id_usuario),
+
+    CONSTRAINT fk_perfil_curso
+        FOREIGN KEY (id_curso)
+        REFERENCES cursos(id_curso)
 );
