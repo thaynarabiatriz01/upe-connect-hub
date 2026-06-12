@@ -6,9 +6,9 @@ VALUES
 
 INSERT INTO certificacoes(nome, instituicao, carga_horaria)
 VALUES
-('Python para Desenvolvimento', 'Academia Tech', 40),
-('Fundamentos de Banco de Dados', 'Instituto Digital', 30),
-('Git e GitHub na Prática', 'Centro de Tecnologia Aplicada', 20);
+('Python para Desenvolvimento', 'Nexus Time', 40),
+('Fundamentos de Banco de Dados', 'Inovação', 30),
+('Git e GitHub na Prática', 'Futuro Futurama', 20);
 
 INSERT INTO areas_interesse(nome, descricao)
 VALUES
