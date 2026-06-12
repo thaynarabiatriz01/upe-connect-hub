@@ -49,8 +49,8 @@ VALUES
  '(55) 55555-5555',
  'Coordenador de Talentos',
  2),
-('João Barreto',
- 'joao.barreto@futurecode.com',
- '(87) 98888-1003',
- 'Gestor de Pessoas',
+('Thaynara Biatriz',
+ 'thaynara.biatriz@futurecode.com',
+ '(66) 66666-6666',
+ 'Gestora de Pessoas',
   3);
