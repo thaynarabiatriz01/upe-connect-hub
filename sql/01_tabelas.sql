@@ -58,7 +58,7 @@ CREATE TABLE usuario_areas_interesse (
 CREATE TABLE empresas (
     id_empresa SERIAL PRIMARY KEY,
     razao_social VARCHAR(150) NOT NULL,
-    nome_fantasia VARCHAR(150),
+    nome VARCHAR(150),
     cnpj VARCHAR(20) UNIQUE,
     email VARCHAR(150),
     telefone VARCHAR(20),
