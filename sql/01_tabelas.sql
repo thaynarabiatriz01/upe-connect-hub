@@ -102,6 +102,7 @@ CREATE TABLE vagas (
 
     id_empresa INTEGER,
     id_tipo_vaga INTEGER NOT NULL,
+    id_usuario INTEGER,
 
     CONSTRAINT fk_vaga_empresa
         FOREIGN KEY (id_empresa)
@@ -109,7 +110,11 @@ CREATE TABLE vagas (
 
     CONSTRAINT fk_vaga_tipo
         FOREIGN KEY (id_tipo_vaga)
-        REFERENCES tipos_vaga(id_tipo_vaga)
+        REFERENCES tipos_vaga(id_tipo_vaga),
+
+    CONSTRAINT fk_vaga_usuario
+        FOREIGN KEY (id_usuario)
+        REFERENCES usuarios(id_usuario)
 );
 
 CREATE TABLE requisitos_vaga (
