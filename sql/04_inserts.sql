@@ -40,7 +40,7 @@ VALUES
 ('Everton Vilela de Sá',
  'everton.sa@upe.br',
  '1234567',
- 20230002',
+ '20230002',
  '(33) 33333-3333',
  1),
 ('Thaynara Biatriz',
@@ -179,7 +179,7 @@ VALUES
 
 (
     'Semana de Tecnologia UPE',
-    'Evento sobre inovação e tecnologia'
+    'Evento sobre inovação e tecnologia',
     '2026-10-20 08:00:00',
     '2026-10-22 18:00:00',
     'UPE Garanhuns',
@@ -189,7 +189,7 @@ VALUES
 
 (
     'Minicurso de PostgreSQL',
-    'Introdução ao PostgreSQL'
+    'Introdução ao PostgreSQL',
     '2026-09-15 18:00:00',
     'Laboratório 02',
     50,

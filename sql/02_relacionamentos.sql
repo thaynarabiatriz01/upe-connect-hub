@@ -1,20 +1,11 @@
--- Relacionamentos para a tabela oportunidades
-ALTER TABLE oportunidades
-    ADD CONSTRAINT fk_oportunidade_empresa
-    FOREIGN KEY (id_empresa) REFERENCES empresas(id_empresa);
-
-ALTER TABLE oportunidades
-    ADD CONSTRAINT fk_oportunidade_tipo_vaga
-    FOREIGN KEY (id_tipo_vaga) REFERENCES tipos_vaga(id_tipo_vaga);
-
 -- Relacionamentos para a tabela candidaturas
 ALTER TABLE candidaturas
     ADD CONSTRAINT fk_candidatura_usuario
     FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario);
 
 ALTER TABLE candidaturas
-    ADD CONSTRAINT fk_candidatura_oportunidade
-    FOREIGN KEY (id_oportunidade) REFERENCES oportunidades(id_oportunidade);
+    ADD CONSTRAINT fk_candidatura_vaga
+    FOREIGN KEY (id_vaga) REFERENCES vagas(id_vaga);
 
 ALTER TABLE candidaturas
     ADD CONSTRAINT fk_candidatura_status

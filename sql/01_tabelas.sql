@@ -59,15 +59,93 @@ CREATE TABLE perfis (
         REFERENCES cursos(id_curso)
 );
 
-CREATE TABLE oportunidades (
-    id_oportunidade SERIAL PRIMARY KEY,
-    titulo VARCHAR(100) NOT NULL,
+CREATE TABLE empresas (
+    id_empresa SERIAL PRIMARY KEY,
+    razao_social VARCHAR(150) NOT NULL,
+    nome_empresa VARCHAR(150),
+    cnpj VARCHAR(20) UNIQUE,
+    email VARCHAR(150),
+    telefone VARCHAR(20),
+    site VARCHAR(255)
+);
+
+CREATE TABLE representantes_empresa (
+    id_representante SERIAL PRIMARY KEY,
+    nome VARCHAR(150) NOT NULL,
+    email VARCHAR(150),
+    telefone VARCHAR(20),
+    cargo VARCHAR(100),
+    id_empresa INTEGER NOT NULL,
+    CONSTRAINT fk_representante_empresa_empresa
+        FOREIGN KEY (id_empresa)
+        REFERENCES empresas(id_empresa)
+);
+
+CREATE TABLE tipos_vaga (
+    id_tipo_vaga SERIAL PRIMARY KEY,
+    nome_tipo VARCHAR(50) NOT NULL UNIQUE
+);
+
+CREATE TABLE vagas (
+    id_vaga SERIAL PRIMARY KEY,
+
+    titulo VARCHAR(150) NOT NULL,
     descricao TEXT NOT NULL,
-    data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    data_encerramento DATE,
+
+    data_publicacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    data_limite DATE NOT NULL,
+
+    quantidade_vagas INTEGER DEFAULT 1,
+
+    status VARCHAR(20) DEFAULT 'ABERTA',
+
     id_empresa INTEGER,
-    id_tipo_vaga INTEGER,
-    status VARCHAR(20) DEFAULT 'ABERTA'
+    id_tipo_vaga INTEGER NOT NULL,
+
+    CONSTRAINT fk_vaga_empresa
+        FOREIGN KEY (id_empresa)
+        REFERENCES empresas(id_empresa),
+
+    CONSTRAINT fk_vaga_tipo
+        FOREIGN KEY (id_tipo_vaga)
+        REFERENCES tipos_vaga(id_tipo_vaga)
+);
+
+CREATE TABLE requisitos_vaga (
+    id_requisito SERIAL PRIMARY KEY,
+
+    descricao TEXT NOT NULL,
+
+    id_vaga INTEGER NOT NULL,
+
+    CONSTRAINT fk_requisito_vaga
+        FOREIGN KEY (id_vaga)
+        REFERENCES vagas(id_vaga)
+);
+
+CREATE TABLE habilidades (
+    id_habilidade SERIAL PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL UNIQUE,
+    descricao TEXT
+);
+
+CREATE TABLE vaga_habilidades (
+    id_vaga INTEGER NOT NULL,
+    id_habilidade INTEGER NOT NULL,
+
+    PRIMARY KEY (
+        id_vaga,
+        id_habilidade
+    ),
+
+    CONSTRAINT fk_vh_vaga
+        FOREIGN KEY (id_vaga)
+        REFERENCES vagas(id_vaga),
+
+    CONSTRAINT fk_vh_habilidade
+        FOREIGN KEY (id_habilidade)
+        REFERENCES habilidades(id_habilidade)
 );
 
 CREATE TABLE status_candidatura (
@@ -80,7 +158,7 @@ CREATE TABLE candidaturas (
     data_candidatura TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     status_candidatura INTEGER NOT NULL,
     id_usuario INTEGER NOT NULL,
-    id_oportunidade INTEGER NOT NULL
+    id_vaga INTEGER NOT NULL
 );
 
 CREATE TABLE feedback_candidatura (
@@ -96,11 +174,6 @@ CREATE TABLE log_candidatura (
     descricao TEXT NOT NULL,
     id_candidatura INTEGER NOT NULL,
     id_usuario INTEGER NOT NULL
-);
-CREATE TABLE habilidades (
-    id_habilidade SERIAL PRIMARY KEY,
-    nome VARCHAR(100) NOT NULL UNIQUE,
-    descricao TEXT
 );
 
 CREATE TABLE usuario_habilidades (
@@ -155,68 +228,6 @@ CREATE TABLE usuario_areas_interesse (
         REFERENCES areas_interesse(id_area)
 );
 
-CREATE TABLE tipos_vagas(
-    id_tipo_vaga SERIAL PRIMARY KEY,
-    nome_tipo VARCHAR(50) NOT NULL UNIQUE
-);
-
-CREATE TABLE vagas (
-    id_vaga SERIAL PRIMARY KEY,
-
-    titulo VARCHAR(150) NOT NULL,
-    descricao TEXT NOT NULL,
-
-    data_publicacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-
-    data_limite DATE NOT NULL,
-
-    quantidade_vagas INTEGER DEFAULT 1,
-
-    status VARCHAR(20) DEFAULT 'ABERTA',
-
-    id_empresa INTEGER NOT NULL,
-    id_tipo_vaga INTEGER NOT NULL,
-
-    CONSTRAINT fk_vaga_empresa
-        FOREIGN KEY (id_empresa)
-        REFERENCES empresas(id_empresa),
-
-    CONSTRAINT fk_vaga_tipo
-        FOREIGN KEY (id_tipo_vaga)
-        REFERENCES tipos_vaga(id_tipo_vaga)
-);
-
-
-CREATE TABLE requisitos_vaga (
-    id_requisito SERIAL PRIMARY KEY,
-
-    descricao TEXT NOT NULL,
-
-    id_vaga INTEGER NOT NULL,
-
-    CONSTRAINT fk_requisito_vaga
-        FOREIGN KEY (id_vaga)
-        REFERENCES vagas(id_vaga)
-);
-
-
-CREATE TABLE vaga_habilidades (
-    id_vaga INTEGER NOT NULL,
-    id_habilidade INTEGER NOT NULL,
-
-    PRIMARY KEY (
-        id_vaga,
-        id_habilidade
-    ),
-
-    CONSTRAINT fk_vh_vaga
-        FOREIGN KEY (id_vaga)
-        REFERENCES vagas(id_vaga),
-
-    CONSTRAINT fk_vh_habilidade
-        FOREIGN KEY (id_habilidade)
-        REFERENCES habilidades(id_habilidade)
-);
 CREATE TABLE eventos(
     id_evento SERIAL PRIMARY KEY,
     titulo VARCHAR (150) NOT NULL,
@@ -246,36 +257,37 @@ CREATE TABLE participacoes (
 
     CONSTRAINT uk_usuario_evento
         UNIQUE (id_usuario, id_evento)
-    );
-
-    CREATE TABLE certificados (
-        id_certificado SERIAL PRIMARY KEY,
-        id_participacao INTEGER UNIQUE NOT NULL,
-        codigo_validacao VARCHAR(100) UNIQUE,
-        data_emissao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-
-        CONSTRAINT fk_certificado_participacao
-            FOREIGN KEY (id_participacao)
-            REFERENCES participacoes(id_participacao)
-    );
-CREATE TABLE empresas (
-    id_empresa SERIAL PRIMARY KEY,
-    razao_social VARCHAR(150) NOT NULL,
-    nome_empresa VARCHAR(150),
-    cnpj VARCHAR(20) UNIQUE,
-    email VARCHAR(150),
-    telefone VARCHAR(20),
-    site VARCHAR(255)
 );
 
-CREATE TABLE representantes_empresa (
-    id_representante SERIAL PRIMARY KEY,
-    nome VARCHAR(150) NOT NULL,
-    email VARCHAR(150),
-    telefone VARCHAR(20),
-    cargo VARCHAR(100),
-    id_empresa INTEGER NOT NULL,
-    CONSTRAINT fk_representante_empresa_empresa
-        FOREIGN KEY (id_empresa)
-        REFERENCES empresas(id_empresa)
+CREATE TABLE certificados (
+    id_certificado SERIAL PRIMARY KEY,
+    id_participacao INTEGER UNIQUE NOT NULL,
+    codigo_validacao VARCHAR(100) UNIQUE,
+    data_emissao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_certificado_participacao
+        FOREIGN KEY (id_participacao)
+        REFERENCES participacoes(id_participacao)
+);
+
+CREATE TABLE notificacoes (
+    id_notificacao SERIAL PRIMARY KEY,
+    id_usuario INTEGER NOT NULL,
+    mensagem TEXT NOT NULL,
+    lida BOOLEAN DEFAULT FALSE,
+    data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_notificacao_usuario
+        FOREIGN KEY (id_usuario)
+        REFERENCES usuarios(id_usuario)
+);
+
+CREATE TABLE auditoria (
+    id_auditoria SERIAL PRIMARY KEY,
+    operacao VARCHAR(50) NOT NULL,
+    tabela_afetada VARCHAR(50) NOT NULL,
+    dados_antigos JSONB,
+    dados_novos JSONB,
+    data_registro TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    usuario_banco VARCHAR(100)
 );
