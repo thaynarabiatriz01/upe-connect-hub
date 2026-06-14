@@ -165,3 +165,48 @@ def listar_eventos_detalhes(admin=Depends(get_current_admin)):
             return results
     finally:
         conn.close()
+
+class VagaAdminRequest(BaseModel):
+    titulo: str
+    descricao: str
+    data_limite: str
+    quantidade_vagas: int
+    id_tipo_vaga: int
+
+@router.delete("/vagas/{id_vaga}")
+def excluir_vaga_admin(id_vaga: int, admin=Depends(get_current_admin)):
+    conn = get_db_connection()
+    try:
+        with conn.cursor() as cursor:
+            # Admin tem superpoderes: não verifica id_usuario
+            cursor.execute("SELECT id_vaga FROM vagas WHERE id_vaga = %s", (id_vaga,))
+            if not cursor.fetchone():
+                raise HTTPException(status_code=404, detail="Vaga não encontrada.")
+            
+            cursor.execute("DELETE FROM candidaturas WHERE id_vaga = %s", (id_vaga,))
+            cursor.execute("DELETE FROM vagas WHERE id_vaga = %s", (id_vaga,))
+            conn.commit()
+            return {"message": "Vaga excluída com sucesso pelo Administrador."}
+    except Exception as e:
+        conn.rollback()
+        raise HTTPException(status_code=400, detail="Erro ao excluir: " + str(e))
+    finally:
+        conn.close()
+
+@router.put("/vagas/{id_vaga}")
+def editar_vaga_admin(id_vaga: int, req: VagaAdminRequest, admin=Depends(get_current_admin)):
+    conn = get_db_connection()
+    try:
+        with conn.cursor() as cursor:
+            cursor.execute("""
+                UPDATE vagas 
+                SET titulo = %s, descricao = %s, data_limite = %s, quantidade_vagas = %s, id_tipo_vaga = %s 
+                WHERE id_vaga = %s
+            """, (req.titulo, req.descricao, req.data_limite, req.quantidade_vagas, req.id_tipo_vaga, id_vaga))
+            conn.commit()
+            return {"message": "Vaga atualizada com sucesso pelo Administrador."}
+    except Exception as e:
+        conn.rollback()
+        raise HTTPException(status_code=400, detail="Erro ao atualizar: " + str(e))
+    finally:
+        conn.close()

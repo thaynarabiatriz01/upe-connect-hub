@@ -182,6 +182,7 @@ function renderVagas(dados) {
                     <th>Empresa</th>
                     <th>Qtd. Vagas</th>
                     <th>Data Fim</th>
+                    <th>Ações</th>
                 </tr>
             </thead>
             <tbody>
@@ -193,10 +194,93 @@ function renderVagas(dados) {
             <td>${d.empresa}</td>
             <td>${d.bolsa} vaga(s)</td>
             <td>${d.data_fim || 'Não definida'}</td>
+            <td>
+                <button class="btn-primary" style="padding: 4px 8px; font-size: 11px; background-color: #F59E0B;" onclick="abrirModalEditarAdmin(${d.id_vaga}, '${d.titulo}', '', '${d.data_fim}', ${d.bolsa}, 1)">✏️</button>
+                <button class="btn-primary" style="padding: 4px 8px; font-size: 11px; background-color: #EF4444;" onclick="excluirVagaAdmin(${d.id_vaga})">🗑️</button>
+            </td>
         </tr>`;
     });
     return html + '</tbody></table>';
 }
+
+// === LÓGICA DE EXCLUSÃO (ADMIN) ===
+window.excluirVagaAdmin = async function(id_vaga) {
+    if (!confirm(`MODO ADMIN: Tem certeza que deseja forçar a exclusão da Vaga #${id_vaga}?`)) return;
+    const token = localStorage.getItem('upe_token');
+    try {
+        const response = await fetch(`${API_URL}/admin/vagas/${id_vaga}`, {
+            method: 'DELETE',
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        
+        if (!response.ok) throw new Error(await response.text());
+        
+        alert("✅ Vaga excluída pelo Administrador.");
+        carregarVagas();
+    } catch(err) {
+        alert("Erro: " + err.message);
+    }
+};
+
+// === LÓGICA DE EDIÇÃO (ADMIN) ===
+let vagaEmEdicaoAdmin = null;
+
+window.abrirModalEditarAdmin = function(id_vaga, titulo, descricao, data_limite, qtd, tipo) {
+    vagaEmEdicaoAdmin = id_vaga;
+    document.getElementById('v_titulo').value = titulo;
+    document.getElementById('v_descricao').value = descricao;
+    document.getElementById('v_data_limite').value = data_limite;
+    document.getElementById('v_qtd').value = qtd;
+    document.getElementById('v_tipo').value = tipo;
+    
+    document.getElementById('modal-vaga').style.display = 'flex';
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+    const formVaga = document.getElementById('form-nova-vaga');
+    if (formVaga) {
+        formVaga.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = e.submitter;
+            btn.textContent = "Salvando...";
+            btn.disabled = true;
+
+            const payload = {
+                titulo: document.getElementById('v_titulo').value,
+                descricao: document.getElementById('v_descricao').value,
+                data_limite: document.getElementById('v_data_limite').value,
+                quantidade_vagas: parseInt(document.getElementById('v_qtd').value),
+                id_tipo_vaga: parseInt(document.getElementById('v_tipo').value)
+            };
+
+            const token = localStorage.getItem('upe_token');
+            try {
+                const response = await fetch(`${API_URL}/admin/vagas/${vagaEmEdicaoAdmin}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(payload)
+                });
+                
+                if (!response.ok) throw new Error(await response.text());
+                
+                alert("✅ Vaga atualizada pelo Administrador!");
+                document.getElementById('modal-vaga').style.display = 'none';
+                formVaga.reset();
+                vagaEmEdicaoAdmin = null;
+                carregarVagas();
+                
+            } catch (err) {
+                alert("Erro: " + err.message);
+            } finally {
+                btn.textContent = "Salvar Alterações";
+                btn.disabled = false;
+            }
+        });
+    }
+});
 
 function renderCandidaturas(dados) {
     let html = `

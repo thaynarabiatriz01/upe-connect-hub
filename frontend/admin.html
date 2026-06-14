@@ -8,13 +8,55 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body class="dashboard-body">
-    <nav class="navbar" style="background-color: #111827;">
+    <nav class="navbar">
         <div class="nav-brand"><span>UPE</span> Admin Center</div>
         <div class="nav-user">
-            <span id="admin-name">Carregando...</span>
-            <button id="logout-btn" class="btn-logout">Sair do Painel</button>
+            <span id="user-name">Administrador</span>
+            <a href="perfil.html" class="btn-primary" style="margin-right: 15px; padding: 6px 12px; background: transparent; border: 1px solid white; text-decoration: none;">Meu Perfil</a>
+            <button id="logout-btn" class="btn-logout">Sair</button>
         </div>
     </nav>
+
+    <!-- Modal Nova Vaga -->
+    <div id="modal-vaga" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); align-items: center; justify-content: center; z-index: 1000;">
+        <div style="background: white; padding: 30px; border-radius: 15px; width: 400px; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
+            <h3 style="margin-bottom: 20px;">Editar Vaga (Modo Admin)</h3>
+            <form id="form-nova-vaga">
+                <div class="input-group">
+                    <label>Título</label>
+                    <input type="text" id="v_titulo" required>
+                </div>
+                <div class="input-group">
+                    <label>Descrição</label>
+                    <textarea id="v_descricao" required rows="3" style="width:100%; padding: 12px; border: 1px solid #e5e7eb; border-radius: 10px;"></textarea>
+                </div>
+                <div class="input-group">
+                    <label>Data Limite</label>
+                    <input type="date" id="v_data_limite" required>
+                </div>
+                <div class="input-group" style="display: flex; gap: 10px;">
+                    <div style="flex:1;">
+                        <label>Qtd. Vagas</label>
+                        <input type="number" id="v_qtd" required min="1" value="1">
+                    </div>
+                    <div style="flex:1;">
+                        <label>Tipo</label>
+                        <select id="v_tipo" class="form-select" required>
+                            <option value="1">Estágio</option>
+                            <option value="2">Monitoria</option>
+                            <option value="3">Bolsa PIBIC</option>
+                            <option value="4">Projeto de Extensão</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div style="display: flex; gap: 10px; margin-top: 20px;">
+                    <button type="submit" class="btn-primary" style="flex:1;">Salvar Alterações</button>
+                    <button type="button" class="btn-primary" style="flex:1; background-color:#ef4444;" onclick="document.getElementById('modal-vaga').style.display='none'">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
     <main class="dashboard-container">
         <header class="dashboard-header">
             <h2 style="color: #111827;">Painel de Controle e Auditoria</h2>

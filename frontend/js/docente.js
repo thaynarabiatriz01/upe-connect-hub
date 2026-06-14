@@ -39,8 +39,16 @@ document.addEventListener('DOMContentLoaded', async () => {
             };
 
             try {
-                const response = await fetch(`${API_URL}/docente/vagas`, {
-                    method: 'POST',
+                let url = `${API_URL}/docente/vagas`;
+                let method = 'POST';
+
+                if (vagaEmEdicao) {
+                    url = `${API_URL}/docente/vagas/${vagaEmEdicao}`;
+                    method = 'PUT';
+                }
+
+                const response = await fetch(url, {
+                    method: method,
                     headers: {
                         'Content-Type': 'application/json',
                         'Authorization': `Bearer ${token}`
@@ -48,17 +56,26 @@ document.addEventListener('DOMContentLoaded', async () => {
                     body: JSON.stringify(payload)
                 });
                 
-                if (!response.ok) throw new Error("Erro ao publicar vaga");
+                if (!response.ok) {
+                    const err = await response.json();
+                    throw new Error(err.detail || "Erro ao salvar vaga");
+                }
                 
-                alert("✅ Vaga publicada com sucesso!");
+                alert("✅ Operação realizada com sucesso!");
                 document.getElementById('modal-vaga').style.display = 'none';
                 formVaga.reset();
+                vagaEmEdicao = null;
+                document.querySelector('#modal-vaga h3').textContent = "Publicar Vaga/Projeto";
+                btn.textContent = "Publicar";
+
                 carregarVagas(token);
                 
             } catch (err) {
                 alert("Erro: " + err.message);
             } finally {
-                btn.textContent = textOrig;
+                if (!vagaEmEdicao) {
+                    btn.textContent = textOrig;
+                }
                 btn.disabled = false;
             }
         });
@@ -95,19 +112,58 @@ async function carregarVagas(token) {
                 <td>${v.data_limite || 'Aberto'}</td>
                 <td>${statusBadge}</td>
                 <td>
-                    <button class="btn-primary" style="padding: 6px 12px; font-size: 12px; background-color: var(--upe-blue);" onclick="carregarCandidaturas(${v.id_vaga}, '${token}')">
-                        Ver Alunos
-                    </button>
+                    <button class="btn-primary" style="padding: 4px 8px; font-size: 11px; background-color: var(--upe-blue);" onclick="carregarCandidaturas(${v.id_vaga}, '${token}')">Alunos</button>
+                    <button class="btn-primary" style="padding: 4px 8px; font-size: 11px; background-color: #F59E0B;" onclick="abrirModalEditar(${v.id_vaga}, '${v.titulo}', '${v.descricao}', '${v.data_limite}', ${v.quantidade_vagas}, ${v.id_tipo_vaga})">✏️</button>
+                    <button class="btn-primary" style="padding: 4px 8px; font-size: 11px; background-color: #EF4444;" onclick="excluirVaga(${v.id_vaga}, '${token}')">🗑️</button>
                 </td>
             `;
             tbody.appendChild(tr);
         });
-
     } catch (error) {
         console.error(error);
         alert(error.message);
     }
 }
+
+// === LÓGICA DE EXCLUSÃO DE VAGA ===
+window.excluirVaga = async function(id_vaga, token) {
+    if (!confirm(`Deseja realmente excluir a Vaga #${id_vaga}? Isso também apagará as candidaturas relacionadas.`)) return;
+    
+    try {
+        const response = await fetch(`${API_URL}/docente/vagas/${id_vaga}`, {
+            method: 'DELETE',
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        
+        if (!response.ok) {
+            const err = await response.json();
+            throw new Error(err.detail || "Erro ao excluir vaga");
+        }
+        
+        alert("✅ Vaga excluída com sucesso.");
+        carregarVagas(token);
+    } catch(err) {
+        alert("Erro: " + err.message);
+    }
+};
+
+// === LÓGICA DE EDIÇÃO DE VAGA ===
+let vagaEmEdicao = null;
+
+window.abrirModalEditar = function(id_vaga, titulo, descricao, data_limite, qtd, tipo) {
+    vagaEmEdicao = id_vaga;
+    document.getElementById('v_titulo').value = titulo;
+    document.getElementById('v_descricao').value = descricao;
+    document.getElementById('v_data_limite').value = data_limite;
+    document.getElementById('v_qtd').value = qtd;
+    document.getElementById('v_tipo').value = tipo;
+    
+    document.querySelector('#modal-vaga h3').textContent = "Editar Vaga/Projeto";
+    const btnSubmit = document.querySelector('#form-nova-vaga button[type="submit"]');
+    btnSubmit.textContent = "Salvar Alterações";
+    
+    document.getElementById('modal-vaga').style.display = 'flex';
+};
 
 window.carregarCandidaturas = async function(id_vaga, token) {
     document.getElementById('painel-candidaturas').style.display = 'block';
