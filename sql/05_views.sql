@@ -85,3 +85,22 @@ INNER JOIN usuario_areas_interesse
 ON usuarios.id_usuario = usuario_areas_interesse.id_usuario
 INNER JOIN areas_interesse
 ON areas_interesse.id_area = usuario_areas_interesse.id_area;
+
+CREATE VIEW vw_vagas_abertas AS
+
+SELECT
+    v.id_vaga,
+    v.titulo,
+    e.nome_empresa,
+    tv.nome_tipo,
+    v.data_limite
+
+FROM vagas v
+
+JOIN empresas e
+    ON v.id_empresa = e.id_empresa
+
+JOIN tipos_vaga tv
+    ON v.id_tipo_vaga = tv.id_tipo_vaga
+
+WHERE status = 'ABERTA';
