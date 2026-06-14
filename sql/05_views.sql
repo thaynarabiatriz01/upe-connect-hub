@@ -1,6 +1,6 @@
 CREATE VIEW representantes_empresas AS
 SELECT
-    empresas.nome,
+    empresas.nome_empresa AS empresa,
     representantes_empresa.nome AS representante,
     representantes_empresa.cargo,
     representantes_empresa.email,
