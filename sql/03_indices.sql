@@ -48,3 +48,12 @@ CREATE INDEX indice_nome_area_interesse
 ON areas_interesse(nome);
 CREATE INDEX indice_usuario_area_interesse
 ON usuario_areas_interesse(id_usuario);
+
+CREATE INDEX idx_evento_data
+ON eventos(data_inicio);
+
+CREATE INDEX idx_participacao_usuario
+ON participacoes(id_usuario);
+
+CREATE INDEX idx_participacao_evento
+ON participacaoes(id_evento);
