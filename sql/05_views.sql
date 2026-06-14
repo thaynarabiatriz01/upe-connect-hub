@@ -31,14 +31,3 @@ INNER JOIN usuario_areas_interesse
 ON usuarios.id_usuario = usuario_areas_interesse.id_usuario
 INNER JOIN areas_interesse
 ON areas_interesse.id_area = usuario_areas_interesse.id_area;
-
-CREATE VIEW representantes_empresas AS
-SELECT
-    empresas.nome,
-    representantes_empresa.nome AS representante,
-    representantes_empresa.cargo,
-    representantes_empresa.email,
-    representantes_empresa.telefone
-FROM empresas
-INNER JOIN representantes_empresa
-ON empresas.id_empresa = representantes_empresa.id_empresa;
