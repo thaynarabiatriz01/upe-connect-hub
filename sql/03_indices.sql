@@ -14,10 +14,3 @@ CREATE INDEX indice_nome_area_interesse
 ON areas_interesse(nome);
 CREATE INDEX indice_usuario_area_interesse
 ON usuario_areas_interesse(id_usuario);
-
-CREATE INDEX indice_nome_empresa
-ON empresas(nome);
-CREATE INDEX indice_cnpj_empresa
-ON empresas(cnpj);
-CREATE INDEX indice_representante_empresa
-ON representantes_empresa(id_empresa);
