@@ -8,4 +8,4 @@ CREATE TRIGGER definir_data_certificacao
 BEFORE INSERT
 ON usuario_certificacoes
 FOR EACH ROW
-EXECUTE FUNCTION definir_data_certificacao();
+EXECUTE FUNCTION preencher_data_certificacao();
