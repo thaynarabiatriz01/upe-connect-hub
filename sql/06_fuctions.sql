@@ -1,4 +1,4 @@
-CREATE OR REPLACE FUNCTION validar_cnpj_empresa()
+CREATE OR REPLACE FUNCTION verificar_cnpj_empresa()
 RETURNS TRIGGER
 AS $$
 BEGIN
