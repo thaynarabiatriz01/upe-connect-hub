@@ -40,3 +40,14 @@ SELECT
 FROM candidaturas c
 JOIN oportunidades o ON c.id_oportunidade = o.id_oportunidade
 JOIN status_candidatura sc ON c.status_candidatura = sc.id_status_candidatura;
+
+CREATE VIEW representantes_empresas AS
+SELECT
+    empresas.nome_empresa AS empresa,
+    representantes_empresa.nome AS representante,
+    representantes_empresa.cargo,
+    representantes_empresa.email,
+    representantes_empresa.telefone
+FROM empresas
+INNER JOIN representantes_empresa
+ON empresas.id_empresa = representantes_empresa.id_empresa;

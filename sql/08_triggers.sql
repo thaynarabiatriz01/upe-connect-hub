@@ -3,3 +3,9 @@ CREATE TRIGGER trg_log_candidatura
 AFTER INSERT OR UPDATE OF status_candidatura ON candidaturas
 FOR EACH ROW
 EXECUTE FUNCTION fn_log_candidatura_trigger();
+
+CREATE TRIGGER verificar_cnpj_empresa
+BEFORE INSERT OR UPDATE
+ON empresas
+FOR EACH ROW
+EXECUTE FUNCTION verificar_cnpj_empresa();
