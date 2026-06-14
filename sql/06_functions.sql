@@ -96,3 +96,78 @@ BEGIN
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION contar_notificacoes_nao_lidas(
+    p_usuario INTEGER
+)
+RETURNS INTEGER
+AS $$
+DECLARE
+    total INTEGER;
+BEGIN
+
+    SELECT COUNT(*)
+    INTO total
+    FROM notificacoes
+    WHERE id_usuario = p_usuario
+    AND lida = FALSE;
+
+    RETURN total;
+
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION fechar_vagas_expiradas()
+RETURNS TRIGGER
+AS
+$$
+BEGIN
+    IF NEW.data_limite < CURRENT_DATE THEN
+        NEW.status := 'ENCERRADA';
+    END IF;
+    RETURN NEW;
+END;
+$$
+LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION registrar_log()
+RETURNS TRIGGER
+AS $$
+BEGIN
+
+    INSERT INTO logs(
+        tabela_afetada,
+        operacao,
+        descricao
+    )
+    VALUES(
+        TG_TABLE_NAME,
+        TG_OP,
+        'Operação executada automaticamente'
+    );
+
+    RETURN NEW;
+
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION registrar_auditoria()
+RETURNS TRIGGER
+AS $$
+BEGIN
+
+    INSERT INTO auditoria(
+        tabela_afetada,
+        operacao,
+        dados_novos
+    )
+    VALUES(
+        TG_TABLE_NAME,
+        TG_OP,
+        row_to_json(NEW)::TEXT
+    );
+
+    RETURN NEW;
+
+END;
+$$ LANGUAGE plpgsql;

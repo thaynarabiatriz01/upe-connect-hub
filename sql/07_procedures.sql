@@ -110,3 +110,16 @@ BEGIN
     VALUES ('GERACAO_RELATORIO', 'vagas/candidaturas', jsonb_build_object('total_vagas', v_total_vagas, 'selecionados', v_selecionados));
 END;
 $$;
+CREATE OR REPLACE PROCEDURE marcar_notificacoes_lidas(
+    p_usuario INTEGER
+)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+
+    UPDATE notificacoes
+    SET lida = TRUE
+    WHERE id_usuario = p_usuario;
+
+END;
+$$;

@@ -22,19 +22,6 @@ ON usuario_certificacoes
 FOR EACH ROW
 EXECUTE FUNCTION preencher_data_certificacao();
 
-CREATE OR REPLACE FUNCTION fechar_vagas_expiradas()
-RETURNS TRIGGER
-AS
-$$
-BEGIN
-    IF NEW.data_limite < CURRENT_DATE THEN
-        NEW.status := 'ENCERRADA';
-    END IF;
-    RETURN NEW;
-END;
-$$
-LANGUAGE plpgsql;
-
 CREATE TRIGGER tg_fechar_vaga
 BEFORE INSERT OR UPDATE
 ON vagas
@@ -47,3 +34,15 @@ AFTER INSERT
 ON vagas
 FOR EACH ROW
 EXECUTE FUNCTION fn_notificacao_nova_vaga_trigger();
+
+CREATE TRIGGER tg_log_notificacoes
+AFTER INSERT
+ON notificacoes
+FOR EACH ROW
+EXECUTE FUNCTION registrar_log();
+
+CREATE TRIGGER tg_auditoria_notificacoes
+AFTER INSERT
+ON notificacoes
+FOR EACH ROW
+EXECUTE FUNCTION registrar_auditoria();
