@@ -37,19 +37,3 @@ INNER JOIN usuario_areas_interesse
     ON usuarios.id_usuario = usuario_areas_interesse.id_usuario
 INNER JOIN areas_interesse
     ON areas_interesse.id_area = usuario_areas_interesse.id_area;
-
-SELECT
-    empresas.nome AS empresa,
-    representantes_empresa.nome AS representante,
-    representantes_empresa.cargo
-FROM empresas
-INNER JOIN representantes_empresa
-    ON empresas.id_empresa = representantes_empresa.id_empresa;
-
-SELECT
-    empresas.nome AS empresa,
-    COUNT(representantes_empresa.id_representante) AS quantidade_representantes
-FROM empresas
-LEFT JOIN representantes_empresa
-    ON empresas.id_empresa = representantes_empresa.id_empresa
-GROUP BY empresas.nome;
