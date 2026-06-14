@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UPE Connect Hub - Login</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="login-container">
+        <div class="glass-card">
+            <div class="logo-area">
+                <h1>UPE</h1>
+                <h2>Connect Hub</h2>
+                <p>Oportunidades Acadêmicas e Profissionais</p>
+            </div>
+            <form id="login-form">
+                <div class="input-group">
+                    <label for="email">E-mail Institucional</label>
+                    <input type="email" id="email" name="email" required placeholder="seu.nome@upe.br">
+                </div>
+                <div class="input-group">
+                    <label for="password">Senha</label>
+                    <input type="password" id="password" name="password" required placeholder="••••••••">
+                </div>
+                <div id="error-message" class="error-message"></div>
+                <button type="submit" class="btn-primary" id="login-btn">
+                    <span>Entrar no Portal</span>
+                </button>
+            </form>
+            <div style="text-align: center; margin-top: 20px;">
+                <a href="cadastro.html" style="color: var(--upe-blue); font-size: 14px; text-decoration: none; font-weight: 600;">Primeiro Acesso? Solicite sua Conta</a>
+            </div>
+        </div>
+    </div>
+    <script src="js/api.js"></script>
+</body>
+</html>

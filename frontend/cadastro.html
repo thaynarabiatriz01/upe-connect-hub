@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro - UPE Connect Hub</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="login-container">
+        <div class="glass-card">
+            <div class="logo-area">
+                <h1>UPE</h1>
+                <h2>Connect Hub</h2>
+                <p>Solicitação de Nova Conta</p>
+            </div>
+            
+            <div id="error-box" class="error-message"></div>
+            
+            <form id="cadastro-form">
+                <div class="input-group">
+                    <label for="nome">Nome Completo</label>
+                    <input type="text" id="nome" required placeholder="Digite seu nome">
+                </div>
+                
+                <div class="input-group">
+                    <label for="email">E-mail Institucional</label>
+                    <input type="email" id="email" required placeholder="seunome@upe.br">
+                </div>
+                
+                <div class="input-group">
+                    <label for="matricula">Matrícula</label>
+                    <input type="text" id="matricula" required placeholder="Ex: 20260001">
+                </div>
+                
+                <div class="input-group">
+                    <label for="telefone">Telefone</label>
+                    <input type="text" id="telefone" required placeholder="(87) 99999-0000">
+                </div>
+                
+                <div class="input-group">
+                    <label for="senha">Senha de Acesso</label>
+                    <input type="password" id="senha" required placeholder="Crie uma senha segura">
+                </div>
+                
+                <div class="input-group">
+                    <label for="tipo">Qual o seu Vínculo com a UPE?</label>
+                    <select id="tipo" class="form-select" required>
+                        <option value="1">Aluno</option>
+                        <option value="2">Professor</option>
+                        <option value="3">Coordenador</option>
+                        <option value="4">Pesquisador</option>
+                        <option value="5">Monitor</option>
+                    </select>
+                </div>
+                
+                <button type="submit" id="btn-cadastrar" class="btn-primary">
+                    <span id="btn-text">Solicitar Acesso à Plataforma</span>
+                </button>
+            </form>
+            <div style="text-align: center; margin-top: 20px;">
+                <a href="index.html" style="color: var(--text-light); font-size: 14px; text-decoration: none;">Já possui uma conta ativa? Voltar ao Login</a>
+            </div>
+        </div>
+    </div>
+    <script src="js/cadastro.js"></script>
+</body>
+</html>

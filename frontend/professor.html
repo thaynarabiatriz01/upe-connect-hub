@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel do Professor - UPE Connect Hub</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="dashboard-body">
+    <nav class="navbar" style="background-color: #1e3a8a;">
+        <div class="nav-brand"><span>UPE</span> Portal do Professor</div>
+        <div class="nav-links">
+            <span id="docente-name" style="color: white; margin-right: 20px;"></span>
+            <a href="perfil.html" class="btn-primary" style="margin-right: 15px; padding: 8px 16px; background: transparent; border: 1px solid white; text-decoration: none;">Meu Perfil</a>
+            <button id="logout-btn" class="btn-primary" style="background-color: #ef4444;">Sair</button>
+        </div>
+    </nav>
+    <main class="dashboard-container">
+        <header class="dashboard-header" style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <h2 style="color: #1e3a8a;">Gestão de Vagas e Monitoria</h2>
+                <p>Acompanhe os processos seletivos e avalie seus alunos.</p>
+            </div>
+            <button class="btn-primary" onclick="document.getElementById('modal-vaga').style.display='flex'">+ Publicar Nova Vaga</button>
+        </header>
+
+        <!-- Modal Nova Vaga -->
+        <div id="modal-vaga" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); align-items: center; justify-content: center; z-index: 1000;">
+            <div style="background: white; padding: 30px; border-radius: 15px; width: 400px; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
+                <h3 style="margin-bottom: 20px;">Publicar Vaga/Projeto</h3>
+                <form id="form-nova-vaga">
+                    <div class="input-group">
+                        <label>Título</label>
+                        <input type="text" id="v_titulo" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Descrição</label>
+                        <textarea id="v_descricao" required rows="3" style="width:100%; padding: 12px; border: 1px solid #e5e7eb; border-radius: 10px;"></textarea>
+                    </div>
+                    <div class="input-group">
+                        <label>Data Limite</label>
+                        <input type="date" id="v_data_limite" required>
+                    </div>
+                    <div class="input-group" style="display: flex; gap: 10px;">
+                        <div style="flex:1;">
+                            <label>Qtd. Vagas</label>
+                            <input type="number" id="v_qtd" required min="1" value="1">
+                        </div>
+                        <div style="flex:1;">
+                            <label>Tipo</label>
+                            <select id="v_tipo" class="form-select" required>
+                                <option value="2">Monitoria</option>
+                                <option value="3">Bolsa PIBIC</option>
+                                <option value="4">Projeto de Extensão</option>
+                            </select>
+                        </div>
+                    </div>
+                    <!-- Em um sistema real o professor estaria atrelado ao departamento, aqui mockamos a empresa 1 para simplificar o DB local -->
+                    <input type="hidden" id="v_empresa" value="1">
+                    
+                    <div style="display: flex; gap: 10px; margin-top: 20px;">
+                        <button type="submit" class="btn-primary" style="flex:1;">Publicar</button>
+                        <button type="button" class="btn-primary" style="flex:1; background-color:#ef4444;" onclick="document.getElementById('modal-vaga').style.display='none'">Cancelar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <div style="display: flex; gap: 40px; margin-top: 20px; flex-wrap: wrap;">
+            <div style="flex: 2; background: white; padding: 25px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); min-width: 400px;">
+                <h3 style="margin-bottom: 20px; color: var(--upe-blue);">Minhas Vagas Publicadas</h3>
+                <div style="overflow-x: auto;">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Título</th>
+                                <th>Qtd. Vagas</th>
+                                <th>Data Limite</th>
+                                <th>Status</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="vagas-tbody">
+                            <tr><td colspan="6">Carregando vagas...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <div id="painel-candidaturas" style="flex: 1.5; background: white; padding: 25px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); min-width: 300px; display: none;">
+                <h3 style="margin-bottom: 20px; color: var(--upe-red);">Candidatos da Vaga <span id="vaga-ativa-id"></span></h3>
+                <div style="overflow-x: auto;">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Aluno</th>
+                                <th>Status Atual</th>
+                                <th>Avaliar</th>
+                            </tr>
+                        </thead>
+                        <tbody id="candidaturas-tbody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+    <script src="js/docente.js"></script>
+</body>
+</html>

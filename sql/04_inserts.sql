@@ -191,6 +191,7 @@ VALUES
     'Minicurso de PostgreSQL',
     'Introdução ao PostgreSQL',
     '2026-09-15 18:00:00',
+    '2026-09-15 22:00:00',
     'Laboratório 02',
     50,
     4

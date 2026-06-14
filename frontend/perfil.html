@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UPE ConnectHub - Meu Perfil</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .profile-container {
+            max-width: 800px;
+            margin: 40px auto;
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        }
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        .full-width {
+            grid-column: 1 / -1;
+        }
+    </style>
+</head>
+<body class="dashboard-body">
+    <nav class="navbar">
+        <div class="logo">UPE <span>ConnectHub</span></div>
+        <div class="nav-links">
+            <span id="user-name" style="color: white; margin-right: 20px;"></span>
+            <button id="btn-voltar" class="btn-primary" style="background-color: transparent; border: 1px solid white;">Voltar ao Painel</button>
+            <button id="logout-btn" class="btn-primary" style="background-color: #ef4444;">Sair</button>
+        </div>
+    </nav>
+
+    <main class="profile-container">
+        <h2 style="color: var(--upe-blue); margin-bottom: 10px;">Meu Perfil Acadêmico</h2>
+        <p style="color: #6b7280; margin-bottom: 30px;">Preencha seus dados para aumentar suas chances nos processos seletivos.</p>
+
+        <form id="form-perfil">
+            <div class="form-grid">
+                <div class="input-group">
+                    <label>Curso</label>
+                    <select id="p_curso" class="form-select" required>
+                        <option value="">Selecione o Curso...</option>
+                        <option value="1">Licenciatura em Computação</option>
+                        <option value="2">Engenharia de Software</option>
+                        <option value="3">Psicologia</option>
+                        <option value="4">Matemática</option>
+                        <option value="5">Medicina</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Período Atual</label>
+                    <input type="number" id="p_periodo" min="1" max="12" required placeholder="Ex: 5">
+                </div>
+                
+                <div class="input-group full-width">
+                    <label>URL da Foto de Perfil</label>
+                    <input type="url" id="p_foto" placeholder="https://exemplo.com/minhafoto.jpg">
+                </div>
+
+                <div class="input-group">
+                    <label>LinkedIn</label>
+                    <input type="url" id="p_linkedin" placeholder="https://linkedin.com/in/seu-perfil">
+                </div>
+                <div class="input-group">
+                    <label>GitHub</label>
+                    <input type="url" id="p_github" placeholder="https://github.com/seu-usuario">
+                </div>
+
+                <div class="input-group full-width">
+                    <label>Biografia (Apresentação)</label>
+                    <textarea id="p_biografia" rows="4" style="width:100%; padding: 12px; border: 1px solid #e5e7eb; border-radius: 10px;" placeholder="Conte um pouco sobre você, seus interesses e objetivos..."></textarea>
+                </div>
+            </div>
+
+            <div style="margin-top: 30px; display: flex; justify-content: flex-end;">
+                <button type="submit" class="btn-primary" style="width: 200px;">Salvar Perfil</button>
+            </div>
+        </form>
+    </main>
+
+    <script src="js/perfil.js"></script>
+</body>
+</html>

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel Gerencial - UPE Connect Hub</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="dashboard-body">
+    <nav class="navbar" style="background-color: #111827;">
+        <div class="nav-brand"><span>UPE</span> Admin Center</div>
+        <div class="nav-user">
+            <span id="admin-name">Carregando...</span>
+            <button id="logout-btn" class="btn-logout">Sair do Painel</button>
+        </div>
+    </nav>
+    <main class="dashboard-container">
+        <header class="dashboard-header">
+            <h2 style="color: #111827;">Painel de Controle e Auditoria</h2>
+            <p>Visão geral unificada do banco de dados e gestão de acessos.</p>
+        </header>
+        
+        <!-- Estatísticas Gerais -->
+        <div class="admin-stats-grid">
+            <div class="stat-card" id="btn-usuarios-ativos">
+                <h3>Usuários Ativos</h3>
+                <h1 id="stat-usuarios">0</h1>
+            </div>
+            <div class="stat-card" id="btn-vagas">
+                <h3>Vagas Publicadas</h3>
+                <h1 id="stat-vagas">0</h1>
+            </div>
+            <div class="stat-card" id="btn-candidaturas">
+                <h3>Candidaturas (Histórico)</h3>
+                <h1 id="stat-candidaturas">0</h1>
+            </div>
+            <div class="stat-card" id="btn-eventos">
+                <h3>Eventos (Histórico)</h3>
+                <h1 id="stat-eventos">0</h1>
+            </div>
+        </div>
+
+        <div id="dynamic-panel" style="margin-top: 40px; background: white; padding: 25px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05);">
+            <h3 style="margin-bottom: 20px; color: var(--upe-red);">Aprovações Pendentes</h3>
+            <p style="font-size: 14px; color: #6b7280; margin-bottom: 20px;">
+                As contas abaixo foram criadas através do formulário de autocadastro e estão inativas (<code>ativo = FALSE</code>). Avalie e valide os usuários para liberar o acesso ao sistema.
+            </p>
+            <div style="overflow-x: auto;">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>ID Banco</th>
+                            <th>Nome de Usuário</th>
+                            <th>E-mail Corporativo</th>
+                            <th>Cargo Solicitado</th>
+                            <th>Ação Administrativa</th>
+                        </tr>
+                    </thead>
+                    <tbody id="usuarios-tbody">
+                        <tr><td colspan="5">Conectando ao banco de dados...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+    <script src="js/admin.js"></script>
+</body>
+</html>

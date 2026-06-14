@@ -56,11 +56,11 @@ WHERE id_candidatura = 2;
 
 -- Contar o número de candidaturas por vaga
 SELECT 
-    o.titulo, 
+    v.titulo, 
     COUNT(c.id_candidatura) AS total_candidatos
-FROM oportunidades o
-LEFT JOIN candidaturas c ON o.id_oportunidade = c.id_oportunidade
-GROUP BY o.titulo;
+FROM vagas v
+LEFT JOIN candidaturas c ON v.id_vaga = c.id_vaga
+GROUP BY v.titulo;
 
 -- Consultar o histórico de logs de uma candidatura (auditoria)
 SELECT 
@@ -150,5 +150,7 @@ FROM certificados c
 JOIN participacoes p
     ON c.id_participacao = p.id_participacao
 JOIN usuarios u
+    ON p.id_usuario = u.id_usuario
+JOIN eventos e
     ON p.id_evento = e.id_evento;
     

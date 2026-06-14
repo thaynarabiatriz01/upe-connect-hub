@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel do Monitor - UPE Connect Hub</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="dashboard-body">
+    <nav class="navbar" style="background-color: #7c3aed;">
+        <div class="nav-brand"><span>UPE</span> Apoio Monitoria</div>
+        <div class="nav-user">
+            <span id="monitor-name">Carregando...</span>
+            <button id="logout-btn" class="btn-logout">Sair</button>
+        </div>
+    </nav>
+    <main class="dashboard-container">
+        <header class="dashboard-header">
+            <h2 style="color: #7c3aed;">Suporte Estudantil e Eventos</h2>
+            <p>Gerencie suas participações em eventos como membro de apoio acadêmico.</p>
+        </header>
+        
+        <div style="background: white; padding: 25px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); margin-top: 40px;">
+            <h3 style="margin-bottom: 20px; color: var(--upe-blue);">Meus Dados Cadastrais</h3>
+            <div id="dados-monitor" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; font-size: 14px;">
+                <p><strong>Nome:</strong> <span id="m-nome">...</span></p>
+                <p><strong>Matrícula:</strong> <span id="m-mat">...</span></p>
+                <p><strong>E-mail:</strong> <span id="m-email">...</span></p>
+                <p><strong>Vínculo:</strong> <span id="m-tipo">...</span></p>
+            </div>
+        </div>
+
+        <div style="margin-top: 40px; text-align: center; color: #6b7280;">
+            <p>Em breve: Módulo de Inscrição e Emissão de Certificados de Monitoria em Eventos.</p>
+        </div>
+    </main>
+    <script src="js/monitor.js"></script>
+</body>
+</html>
