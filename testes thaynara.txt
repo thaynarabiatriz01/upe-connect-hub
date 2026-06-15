@@ -1,0 +1,235 @@
+
+import psycopg2
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+
+def conectar():
+
+    return psycopg2.connect(
+        host=os.getenv("DB_HOST"),
+        database=os.getenv("DB_NAME"),
+        user=os.getenv("DB_USER"),
+        password=os.getenv("DB_PASSWORD"),
+        port=os.getenv("DB_PORT")
+    )
+
+from conexao import conectar
+
+
+def cadastrar_usuario():
+
+    nome = input("Nome: ")
+    email = input("Email: ")
+    senha = input("Senha: ")
+    matricula = input("Matricula: ")
+    telefone = input("Telefone: ")
+
+    print("\nTipos:")
+    print("1 - Aluno")
+    print("2 - Professor")
+    print("3 - Coordenador")
+    print("4 - Pesquisador")
+    print("5 - Monitor")
+    print("6 - Administrador")
+
+    tipo = int(input("Tipo: "))
+
+    conn = conectar()
+    cur = conn.cursor()
+
+    cur.execute("""
+        INSERT INTO usuarios
+        (nome,email,senha,matricula,telefone,id_tipo_usuario)
+        VALUES (%s,%s,%s,%s,%s,%s)
+    """,
+    (nome,email,senha,matricula,telefone,tipo))
+
+    conn.commit()
+
+    print("\nUsuário cadastrado!")
+
+    cur.close()
+    conn.close()
+
+
+def listar_usuarios():
+
+    conn = conectar()
+    cur = conn.cursor()
+
+    cur.execute("""
+        SELECT
+            id_usuario,
+            nome,
+            email
+        FROM usuarios
+        ORDER BY id_usuario
+    """)
+
+    usuarios = cur.fetchall()
+
+    print("\n===== USUÁRIOS =====")
+
+    for u in usuarios:
+        print(u)
+
+    cur.close()
+    conn.close()
+
+from conexao import conectar
+
+
+def cadastrar_evento():
+
+    titulo = input("Título: ")
+    descricao = input("Descrição: ")
+    local = input("Local: ")
+    data_evento = input("Data (YYYY-MM-DD): ")
+
+    conn = conectar()
+    cur = conn.cursor()
+
+    cur.execute("""
+        INSERT INTO eventos
+        (titulo,descricao,local,data_evento)
+        VALUES (%s,%s,%s,%s)
+    """,
+    (titulo,descricao,local,data_evento))
+
+    conn.commit()
+
+    print("\nEvento cadastrado!")
+
+    cur.close()
+    conn.close()
+
+
+def listar_eventos():
+
+    conn = conectar()
+    cur = conn.cursor()
+
+    cur.execute("""
+        SELECT
+            id_evento,
+            titulo,
+            data_evento
+        FROM eventos
+    """)
+
+    eventos = cur.fetchall()
+
+    print("\n===== EVENTOS =====")
+
+    for e in eventos:
+        print(e)
+
+    cur.close()
+    conn.close()
+
+from conexao import conectar
+
+
+def cadastrar_vaga():
+
+    titulo = input("Título da vaga: ")
+    descricao = input("Descrição: ")
+    requisitos = input("Requisitos: ")
+
+    conn = conectar()
+    cur = conn.cursor()
+
+    cur.execute("""
+        INSERT INTO vagas
+        (titulo,descricao,requisitos)
+        VALUES (%s,%s,%s)
+    """,
+    (titulo,descricao,requisitos))
+
+    conn.commit()
+
+    print("\nVaga cadastrada!")
+
+    cur.close()
+    conn.close()
+
+
+def listar_vagas():
+
+    conn = conectar()
+    cur = conn.cursor()
+
+    cur.execute("""
+        SELECT
+            id_vaga,
+            titulo
+        FROM vagas
+    """)
+
+    vagas = cur.fetchall()
+
+    print("\n===== VAGAS =====")
+
+    for vaga in vagas:
+        print(vaga)
+
+    cur.close()
+    conn.close()
+
+from usuarios import (
+    cadastrar_usuario,
+    listar_usuarios
+)
+
+from eventos import (
+    cadastrar_evento,
+    listar_eventos
+)
+
+from vagas import (
+    cadastrar_vaga,
+    listar_vagas
+)
+
+while True:
+
+    print("\n===== UPE CONNECT HUB =====")
+
+    print("1 - Cadastrar usuário")
+    print("2 - Listar usuários")
+
+    print("3 - Cadastrar evento")
+    print("4 - Listar eventos")
+
+    print("5 - Cadastrar vaga")
+    print("6 - Listar vagas")
+
+    print("0 - Sair")
+
+    opcao = input("\nEscolha: ")
+
+    if opcao == "1":
+        cadastrar_usuario()
+
+    elif opcao == "2":
+        listar_usuarios()
+
+    elif opcao == "3":
+        cadastrar_evento()
+
+    elif opcao == "4":
+        listar_eventos()
+
+    elif opcao == "5":
+        cadastrar_vaga()
+
+    elif opcao == "6":
+        listar_vagas()
+
+    elif opcao == "0":
+        break
+
+    else:
+        print("Opção inválida")
