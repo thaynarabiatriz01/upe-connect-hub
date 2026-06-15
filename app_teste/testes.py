@@ -75,15 +75,16 @@ def cadastrar_evento():
     titulo = input("Título: ")
     descricao = input("Descrição: ")
     local = input("Local: ")
-    data_evento = input("Data (YYYY-MM-DD): ")
+    data_inicio = input("Data Início (YYYY-MM-DD HH:MM:SS): ")
+    data_fim = input("Data Fim (YYYY-MM-DD HH:MM:SS): ")
 
     try:
         conn = conectar()
         cur = conn.cursor()
         cur.execute("""
-            INSERT INTO eventos (titulo, descricao, local, data_evento)
-            VALUES (%s, %s, %s, %s)
-        """, (titulo, descricao, local, data_evento))
+            INSERT INTO eventos (titulo, descricao, local, data_inicio, data_fim)
+            VALUES (%s, %s, %s, %s, %s)
+        """, (titulo, descricao, local, data_inicio, data_fim))
         conn.commit()
         print("\nEvento cadastrado com sucesso!")
     except Exception as e:
@@ -98,7 +99,7 @@ def listar_eventos():
         conn = conectar()
         cur = conn.cursor()
         cur.execute("""
-            SELECT id_evento, titulo, data_evento, local
+            SELECT id_evento, titulo, data_inicio, local
             FROM eventos
             ORDER BY id_evento
         """)
@@ -115,17 +116,17 @@ def cadastrar_vaga():
     print("\n--- Cadastro de Vaga ---")
     titulo = input("Título da vaga: ")
     descricao = input("Descrição: ")
-    requisitos = input("Requisitos: ")
+    data_limite = input("Data Limite (YYYY-MM-DD): ")
+    id_tipo_vaga = input("ID do Tipo da Vaga (ex: 1, 2, 3): ")
 
     try:
         conn = conectar()
         cur = conn.cursor()
-        # Nota: Caso a tabela vagas possua outras colunas obrigatórias no banco,
-        # pode ser necessário ajustá-las aqui.
+        # Inserindo dados na tabela vagas (requisitos é uma tabela separada no BD)
         cur.execute("""
-            INSERT INTO vagas (titulo, descricao, requisitos)
-            VALUES (%s, %s, %s)
-        """, (titulo, descricao, requisitos))
+            INSERT INTO vagas (titulo, descricao, data_limite, id_tipo_vaga)
+            VALUES (%s, %s, %s, %s)
+        """, (titulo, descricao, data_limite, id_tipo_vaga))
         conn.commit()
         print("\nVaga cadastrada com sucesso!")
     except Exception as e:
