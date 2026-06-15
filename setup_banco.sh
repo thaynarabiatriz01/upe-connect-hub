@@ -4,8 +4,12 @@ echo "      Instalador Automatico do Banco de Dados"
 echo "              UPE Connect Hub"
 echo "=============================================================="
 echo ""
-echo "Verificando dependencias do Python..."
-pip3 install psycopg2-binary --quiet
+if ! python3 -c "import psycopg2" &> /dev/null; then
+    echo "A biblioteca psycopg2 não está instalada."
+    echo "Por favor, instale-a rodando o comando:"
+    echo "  sudo apt install -y python3-psycopg2"
+    exit 1
+fi
 
 echo ""
 echo "Iniciando a criacao do banco e injecao de tabelas..."

@@ -2,8 +2,6 @@
 INSERT INTO usuarios
 (nome, email, senha, matricula, telefone, id_tipo_usuario)
 VALUES
-('Thaynara Biatriz','thaynara.biatriz@upe.br','123456','20250001','87999990001',1),
-
 ('Maria Luisa','maria.luisa@upe.br','123456','20250002','87999990002',1),
 
 ('João Pedro','joao@upe.br','123456','20250003','87999990003',1),
@@ -20,7 +18,8 @@ VALUES
 
 ('Pesquisadora Juliana','juliana@upe.br','123456',NULL,'87999990009',4),
 
-('Administrador Sistema','admin@upe.br','123456',NULL,'87999990010',6);
+('Administrador Sistema','admin@upe.br','123456',NULL,'87999990010',6)
+ON CONFLICT (email) DO NOTHING;
 
 -- Estrutura de Perfis
 

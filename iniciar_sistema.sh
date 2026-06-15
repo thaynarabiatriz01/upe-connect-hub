@@ -6,7 +6,14 @@ echo ""
 
 if [ ! -d ".venv" ]; then
     echo "[1/3] Criando ambiente virtual Python (.venv)..."
-    python3 -m venv .venv
+    if ! python3 -m venv .venv; then
+        echo ""
+        echo "[ERRO] Falha ao criar o ambiente virtual."
+        echo "No Ubuntu/Debian, você provavelmente precisa instalar o pacote python3-venv."
+        echo "Por favor, execute o seguinte comando no terminal:"
+        echo "  sudo apt install -y python3-venv"
+        exit 1
+    fi
 else
     echo "[1/3] Ambiente virtual ja existe."
 fi

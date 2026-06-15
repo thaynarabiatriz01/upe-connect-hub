@@ -117,7 +117,7 @@ SELECT
     n.titulo,
     n.mensagem,
     n.lida,
-    n.data_envio
+    n.data_criacao
 FROM notificacoes n
 JOIN usuarios u
 ON n.id_usuario = u.id_usuario;

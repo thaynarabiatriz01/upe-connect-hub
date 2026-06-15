@@ -173,4 +173,4 @@ WHERE lida = FALSE;
 
 SELECT *
 FROM auditoria
-ORDER BY data_operacao DESC;
+ORDER BY data_registro DESC;
