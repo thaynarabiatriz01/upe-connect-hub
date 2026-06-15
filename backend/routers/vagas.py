@@ -62,3 +62,41 @@ def candidatar_vaga(req: CandidaturaRequest, user=Depends(get_current_user)):
         raise HTTPException(status_code=400, detail=str(e))
     finally:
         conn.close()
+
+@router.get("/{id_vaga}")
+def buscar_vaga(id_vaga: int):
+    conn = get_db_connection()
+    if not conn:
+        raise HTTPException(status_code=500, detail="Erro de conexão com o banco de dados")
+    
+    try:
+        with conn.cursor(cursor_factory=RealDictCursor) as cursor:
+            # Busca a vaga diretamente da tabela para garantir que mesmo vagas fechadas/vencidas apareçam nos detalhes da candidatura
+            cursor.execute("""
+                SELECT v.id_vaga, v.titulo, v.descricao, v.data_limite, v.quantidade_vagas,
+                       e.nome_empresa, tv.nome_tipo AS tipo_vaga
+                FROM vagas v
+                LEFT JOIN empresas e ON v.id_empresa = e.id_empresa
+                JOIN tipos_vaga tv ON v.id_tipo_vaga = tv.id_tipo_vaga
+                WHERE v.id_vaga = %s
+            """, (id_vaga,))
+            vaga = cursor.fetchone()
+            if not vaga:
+                raise HTTPException(status_code=404, detail="Vaga não encontrada")
+                
+            # Busca requisitos da vaga
+            cursor.execute("SELECT descricao FROM requisitos_vaga WHERE id_vaga = %s", (id_vaga,))
+            vaga['requisitos'] = [x['descricao'] for x in cursor.fetchall()]
+
+            # Busca habilidades recomendadas
+            cursor.execute("""
+                SELECT h.id_habilidade, h.nome 
+                FROM vaga_habilidades vh
+                JOIN habilidades h ON vh.id_habilidade = h.id_habilidade
+                WHERE vh.id_vaga = %s
+            """, (id_vaga,))
+            vaga['habilidades'] = cursor.fetchall()
+            
+            return vaga
+    finally:
+        conn.close()

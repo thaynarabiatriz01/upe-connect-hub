@@ -110,32 +110,7 @@ def listar_minhas_habilidades(user=Depends(get_current_user)):
     finally:
         conn.close()
 
-@router.get("/minhas_candidaturas")
-def listar_minhas_candidaturas(user=Depends(get_current_user)):
-    conn = get_db_connection()
-    try:
-        with conn.cursor(cursor_factory=RealDictCursor) as cursor:
-            cursor.execute("""
-                SELECT 
-                    c.id_candidatura,
-                    v.titulo,
-                    s.descricao as status,
-                    c.data_candidatura,
-                    (SELECT fc.comentario FROM feedback_candidatura fc WHERE fc.id_candidatura = c.id_candidatura ORDER BY fc.data_feedback DESC LIMIT 1) as ultimo_feedback
-                FROM candidaturas c
-                JOIN vagas v ON c.id_vaga = v.id_vaga
-                JOIN status_candidatura s ON c.status_candidatura = s.id_status_candidatura
-                WHERE c.id_usuario = %s
-                ORDER BY c.data_candidatura DESC
-            """, (user["id"],))
-            
-            results = cursor.fetchall()
-            for r in results:
-                if r['data_candidatura']:
-                    r['data_candidatura'] = r['data_candidatura'].strftime('%d/%m/%Y')
-            return results
-    finally:
-        conn.close()
+
 
 @router.post("/habilidades")
 def adicionar_minha_habilidade(req: HabilidadeRequest, user=Depends(get_current_user)):
@@ -286,7 +261,7 @@ def listar_notificacoes(user=Depends(get_current_user)):
     try:
         with conn.cursor(cursor_factory=RealDictCursor) as cursor:
             cursor.execute("""
-                SELECT id_notificacao, titulo, mensagem, lida, data_criacao 
+                SELECT id_notificacao, COALESCE(titulo, 'Aviso do Sistema') as titulo, mensagem, lida, data_criacao 
                 FROM notificacoes 
                 WHERE id_usuario = %s 
                 ORDER BY data_criacao DESC
@@ -325,7 +300,7 @@ def listar_minhas_candidaturas(user=Depends(get_current_user)):
     try:
         with conn.cursor(cursor_factory=RealDictCursor) as cursor:
             cursor.execute("""
-                SELECT c.id_candidatura, c.data_candidatura, s.descricao as status, v.titulo as vaga, e.nome_empresa as empresa,
+                SELECT c.id_candidatura, c.id_vaga, c.data_candidatura, s.descricao as status, v.titulo as vaga, e.nome_empresa as empresa,
                        fc.comentario as feedback, fc.data_feedback
                 FROM candidaturas c
                 JOIN vagas v ON c.id_vaga = v.id_vaga
@@ -352,5 +327,31 @@ def listar_tipos_usuario():
         with conn.cursor(cursor_factory=RealDictCursor) as cursor:
             cursor.execute("SELECT * FROM tipos_usuario ORDER BY id_tipo_usuario")
             return cursor.fetchall()
+    finally:
+        conn.close()
+
+@router.delete("/minhas_candidaturas/{id_candidatura}")
+def cancelar_candidatura(id_candidatura: int, user=Depends(get_current_user)):
+    conn = get_db_connection()
+    try:
+        with conn.cursor() as cursor:
+            # Apaga somente se pertencer ao usuário logado
+            cursor.execute("""
+                DELETE FROM candidaturas 
+                WHERE id_candidatura = %s AND id_usuario = %s
+                RETURNING id_candidatura
+            """, (id_candidatura, user["id"]))
+            
+            if not cursor.fetchone():
+                raise HTTPException(status_code=404, detail="Candidatura não encontrada ou você não tem permissão para excluí-la.")
+            
+            conn.commit()
+            return {"message": "Sua candidatura foi cancelada com sucesso!"}
+    except HTTPException:
+        conn.rollback()
+        raise
+    except Exception as e:
+        conn.rollback()
+        raise HTTPException(status_code=400, detail="Erro ao cancelar candidatura. " + str(e))
     finally:
         conn.close()

@@ -66,7 +66,27 @@
         </div>
     </main>
 
+    <!-- Modal de Detalhes da Vaga -->
+    <div id="modal-vaga" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 2000; align-items: center; justify-content: center;">
+        <div style="background: white; padding: 25px; border-radius: 12px; max-width: 500px; width: 90%; max-height: 80vh; overflow-y: auto; box-shadow: 0 10px 25px rgba(0,0,0,0.2);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid #e5e7eb; padding-bottom: 10px;">
+                <h2 id="modal-vaga-titulo" style="margin: 0; color: #1e3a8a;">Detalhes da Vaga</h2>
+                <button onclick="fecharModalVaga()" style="background: none; border: none; font-size: 20px; cursor: pointer; color: #6b7280;">&times;</button>
+            </div>
+            <div id="modal-vaga-conteudo">
+                <p>Carregando detalhes...</p>
+            </div>
+            <div style="margin-top: 20px; text-align: right;">
+                <button onclick="fecharModalVaga()" class="btn-primary" style="background: #e5e7eb; color: #374151; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer;">Fechar</button>
+            </div>
+        </div>
+    </div>
+
     <script>
+        function fecharModalVaga() {
+            document.getElementById('modal-vaga').style.display = 'none';
+        }
+
         function showTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(el => el.style.display = 'none');
             document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));

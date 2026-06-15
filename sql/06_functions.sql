@@ -88,8 +88,8 @@ $$ LANGUAGE plpgsql;
 CREATE OR REPLACE FUNCTION fn_notificacao_nova_vaga_trigger()
 RETURNS TRIGGER AS $$
 BEGIN
-    INSERT INTO notificacoes (id_usuario, mensagem)
-    SELECT id_usuario, 'Nova vaga publicada: ' || NEW.titulo
+    INSERT INTO notificacoes (id_usuario, titulo, mensagem)
+    SELECT id_usuario, 'Nova Vaga Publicada', 'Uma nova oportunidade está disponível: ' || NEW.titulo
     FROM usuarios
     WHERE ativo = TRUE;
     
