@@ -110,6 +110,33 @@ def listar_minhas_habilidades(user=Depends(get_current_user)):
     finally:
         conn.close()
 
+@router.get("/minhas_candidaturas")
+def listar_minhas_candidaturas(user=Depends(get_current_user)):
+    conn = get_db_connection()
+    try:
+        with conn.cursor(cursor_factory=RealDictCursor) as cursor:
+            cursor.execute("""
+                SELECT 
+                    c.id_candidatura,
+                    v.titulo,
+                    s.descricao as status,
+                    c.data_candidatura,
+                    (SELECT fc.comentario FROM feedback_candidatura fc WHERE fc.id_candidatura = c.id_candidatura ORDER BY fc.data_feedback DESC LIMIT 1) as ultimo_feedback
+                FROM candidaturas c
+                JOIN vagas v ON c.id_vaga = v.id_vaga
+                JOIN status_candidatura s ON c.status_candidatura = s.id_status_candidatura
+                WHERE c.id_usuario = %s
+                ORDER BY c.data_candidatura DESC
+            """, (user["id"],))
+            
+            results = cursor.fetchall()
+            for r in results:
+                if r['data_candidatura']:
+                    r['data_candidatura'] = r['data_candidatura'].strftime('%d/%m/%Y')
+            return results
+    finally:
+        conn.close()
+
 @router.post("/habilidades")
 def adicionar_minha_habilidade(req: HabilidadeRequest, user=Depends(get_current_user)):
     conn = get_db_connection()

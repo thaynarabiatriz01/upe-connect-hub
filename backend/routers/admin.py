@@ -193,6 +193,55 @@ def excluir_vaga_admin(id_vaga: int, admin=Depends(get_current_admin)):
     finally:
         conn.close()
 
+@router.get("/logs")
+def get_auditoria_logs(admin=Depends(get_current_admin)):
+    conn = get_db_connection()
+    if not conn:
+        raise HTTPException(status_code=500, detail="Erro de conexão com o banco de dados")
+    
+    try:
+        with conn.cursor(cursor_factory=RealDictCursor) as cursor:
+            query = """
+                SELECT 
+                    a.id_auditoria,
+                    a.operacao,
+                    a.tabela_afetada,
+                    a.data_registro,
+                    COALESCE(a.dados_novos->>'id_usuario', a.dados_antigos->>'id_usuario')::int as id_usuario,
+                    u.nome as nome_usuario,
+                    t.nome_tipo as tipo_usuario
+                FROM auditoria a
+                LEFT JOIN usuarios u ON u.id_usuario = COALESCE(a.dados_novos->>'id_usuario', a.dados_antigos->>'id_usuario')::int
+                LEFT JOIN tipos_usuario t ON u.id_tipo_usuario = t.id_tipo_usuario
+                WHERE a.tabela_afetada IN ('vagas', 'eventos', 'notificacoes', 'candidaturas')
+                ORDER BY a.data_registro DESC
+                LIMIT 500
+            """
+            cursor.execute(query)
+            logs = cursor.fetchall()
+            return logs
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        conn.close()
+
+@router.delete("/usuarios/{id_usuario}")
+def excluir_usuario(id_usuario: int, admin=Depends(get_current_admin)):
+    conn = get_db_connection()
+    if not conn:
+        raise HTTPException(status_code=500, detail="Erro de conexão com o banco")
+    
+    try:
+        with conn.cursor() as cursor:
+            cursor.execute("UPDATE usuarios SET ativo = FALSE WHERE id_usuario = %s", (id_usuario,))
+            conn.commit()
+            return {"message": "Usuário excluído (desativado) com sucesso"}
+    except Exception as e:
+        conn.rollback()
+        raise HTTPException(status_code=500, detail=f"Erro ao excluir usuário: {e}")
+    finally:
+        conn.close()
+
 @router.put("/vagas/{id_vaga}")
 def editar_vaga_admin(id_vaga: int, req: VagaAdminRequest, admin=Depends(get_current_admin)):
     conn = get_db_connection()

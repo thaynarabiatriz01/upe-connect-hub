@@ -156,18 +156,21 @@ RETURNS TRIGGER
 AS $$
 BEGIN
 
-    INSERT INTO auditoria(
-        tabela_afetada,
-        operacao,
-        dados_novos
-    )
-    VALUES(
-        TG_TABLE_NAME,
-        TG_OP,
-        row_to_json(NEW)::JSONB
-    );
+    IF (TG_OP = 'DELETE') THEN
+        INSERT INTO auditoria(tabela_afetada, operacao, dados_antigos)
+        VALUES(TG_TABLE_NAME, TG_OP, row_to_json(OLD)::JSONB);
+        RETURN OLD;
+    ELSIF (TG_OP = 'UPDATE') THEN
+        INSERT INTO auditoria(tabela_afetada, operacao, dados_antigos, dados_novos)
+        VALUES(TG_TABLE_NAME, TG_OP, row_to_json(OLD)::JSONB, row_to_json(NEW)::JSONB);
+        RETURN NEW;
+    ELSIF (TG_OP = 'INSERT') THEN
+        INSERT INTO auditoria(tabela_afetada, operacao, dados_novos)
+        VALUES(TG_TABLE_NAME, TG_OP, row_to_json(NEW)::JSONB);
+        RETURN NEW;
+    END IF;
 
-    RETURN NEW;
+    RETURN NULL;
 
 END;
 $$ LANGUAGE plpgsql;

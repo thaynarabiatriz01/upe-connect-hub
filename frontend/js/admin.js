@@ -23,6 +23,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.getElementById('btn-candidaturas').addEventListener('click', () => carregarTabela('candidaturas'));
     document.getElementById('btn-eventos').addEventListener('click', () => carregarTabela('eventos'));
     document.getElementById('btn-empresas').addEventListener('click', () => carregarTabela('empresas'));
+    document.getElementById('btn-logs').addEventListener('click', () => carregarLogsAuditoria());
 
     // Carrega dashboard principal e exibe aprovações pendentes por padrão
     await carregarDashboardAdmin(token);
@@ -54,6 +55,62 @@ async function carregarDashboardAdmin(token) {
 // ==========================================
 // RENDERIZAÇÃO DINÂMICA DE TABELAS
 // ==========================================
+
+async function carregarLogsAuditoria() {
+    const panel = document.getElementById('dynamic-panel');
+    panel.innerHTML = `<p>Buscando histórico na tabela de auditoria...</p>`;
+    
+    const token = localStorage.getItem('upe_token');
+    try {
+        const response = await fetch(`${API_URL}/admin/logs`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        
+        if (!response.ok) throw new Error("Erro ao buscar logs");
+        const logs = await response.json();
+        
+        let html = `
+            <h3 style="margin-bottom: 20px; color: #4f46e5;">Logs do Sistema / Auditoria</h3>
+            <p style="font-size: 14px; color: #6b7280; margin-bottom: 20px;">Histórico de todas as operações nas principais tabelas do banco.</p>
+            <div style="overflow-x: auto;">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Data</th>
+                            <th>Autor</th>
+                            <th>Cargo</th>
+                            <th>Tabela Afetada</th>
+                            <th>Ação</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+        `;
+        
+        if (logs.length === 0) {
+            html += `<tr><td colspan="5" style="text-align:center;">Nenhum registro de log encontrado.</td></tr>`;
+        } else {
+            logs.forEach(l => {
+                const dataFormatada = new Date(l.data_registro).toLocaleString('pt-BR');
+                const operacaoCor = l.operacao === 'INSERT' ? '#10b981' : (l.operacao === 'UPDATE' ? '#f59e0b' : '#ef4444');
+                html += `
+                    <tr>
+                        <td>${dataFormatada}</td>
+                        <td style="font-weight: 500;">${l.nome_usuario || 'Sistema/Desconhecido'} (ID: ${l.id_usuario || '?'})</td>
+                        <td><span class="status-badge" style="background:#e5e7eb;color:#374151;">${l.tipo_usuario || 'N/A'}</span></td>
+                        <td><code>${l.tabela_afetada}</code></td>
+                        <td><span style="color: ${operacaoCor}; font-weight: bold;">${l.operacao}</span></td>
+                    </tr>
+                `;
+            });
+        }
+        
+        html += `</tbody></table></div>`;
+        panel.innerHTML = html;
+        
+    } catch (error) {
+        panel.innerHTML = `<p style="color:red;">Erro ao processar a auditoria: ${error.message}</p>`;
+    }
+}
 
 function renderTabelaPendentes(usuarios) {
     const panel = document.getElementById('dynamic-panel');

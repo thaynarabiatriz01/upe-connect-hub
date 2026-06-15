@@ -46,3 +46,16 @@ AFTER INSERT
 ON notificacoes
 FOR EACH ROW
 EXECUTE FUNCTION registrar_auditoria();
+
+-- Auditoria Universal para Monitoramento Administrativo
+CREATE TRIGGER tg_auditoria_vagas
+AFTER INSERT OR UPDATE OR DELETE
+ON vagas
+FOR EACH ROW
+EXECUTE FUNCTION registrar_auditoria();
+
+CREATE TRIGGER tg_auditoria_eventos
+AFTER INSERT OR UPDATE OR DELETE
+ON eventos
+FOR EACH ROW
+EXECUTE FUNCTION registrar_auditoria();
