@@ -1,5 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+import os
 from routers import auth, vagas, admin, docente, monitor, usuarios, eventos, empresas
 
 app = FastAPI(title="API - UPE Connect Hub")
@@ -13,7 +15,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Registrando as rotas
+# Registrando as rotas da API
 app.include_router(auth.router, prefix="/auth", tags=["Autenticação"])
 app.include_router(usuarios.router, prefix="/usuarios", tags=["Usuários"])
 app.include_router(vagas.router, prefix="/vagas", tags=["Vagas"])
@@ -23,6 +25,7 @@ app.include_router(monitor.router, prefix="/monitor", tags=["Monitores"])
 app.include_router(eventos.router, prefix="/eventos", tags=["Eventos"])
 app.include_router(empresas.router, prefix="/empresas", tags=["Empresas"])
 
-@app.get("/")
-def read_root():
-    return {"message": "UPE Connect Hub API está rodando!"}
+# Servir os arquivos estáticos do Frontend na raiz do servidor
+frontend_path = os.path.join(os.path.dirname(__file__), "..", "frontend")
+if os.path.exists(frontend_path):
+    app.mount("/", StaticFiles(directory=frontend_path, html=True), name="frontend")

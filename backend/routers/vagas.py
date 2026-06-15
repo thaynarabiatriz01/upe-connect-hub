@@ -1,7 +1,8 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
 from pydantic import BaseModel
 from psycopg2.extras import RealDictCursor
 from database import get_db_connection
+from routers.usuarios import get_current_user
 
 router = APIRouter()
 

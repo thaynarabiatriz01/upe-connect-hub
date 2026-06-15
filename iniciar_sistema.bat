@@ -4,13 +4,16 @@ echo            Iniciador do UPE Connect Hub
 echo ==============================================================
 echo.
 
-IF NOT EXIST ".venv" (
-    echo [1/3] Criando ambiente virtual Python (.venv)...
-    python -m venv .venv
-) ELSE (
-    echo [1/3] Ambiente virtual ja existe.
-)
+IF EXIST .venv\Scripts\activate.bat GOTO VENV_EXISTS
 
+echo [1/3] Criando ambiente virtual Python (.venv)...
+python -m venv .venv
+GOTO CONTINUE
+
+:VENV_EXISTS
+echo [1/3] Ambiente virtual ja existe.
+
+:CONTINUE
 echo [2/3] Instalando dependencias do backend...
 call .venv\Scripts\activate.bat
 pip install -r backend\requirements.txt --quiet
@@ -25,3 +28,7 @@ echo.
 
 cd backend
 uvicorn main:app --reload --host 0.0.0.0 --port 8000
+
+echo.
+echo Servidor encerrado ou ocorreu um erro fatal no carregamento da API.
+pause

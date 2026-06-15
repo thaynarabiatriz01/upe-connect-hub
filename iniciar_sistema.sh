@@ -25,3 +25,7 @@ echo ""
 
 cd backend
 uvicorn main:app --reload --host 0.0.0.0 --port 8000
+
+echo ""
+echo "Servidor encerrado ou ocorreu um erro fatal no carregamento."
+read -p "Pressione ENTER para fechar..."
