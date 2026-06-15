@@ -113,6 +113,36 @@ UPE-Connect-Hub/
 
 ---
 
+## Como Executar o Projeto do Zero
+
+Para que qualquer pessoa consiga rodar esta aplicação rapidamente em sua própria máquina, siga os três passos a seguir:
+
+### 1. Pré-Requisitos
+- Ter o **Python** instalado na máquina.
+- Ter o banco de dados **PostgreSQL** instalado (rodando na porta padrão `5432`). 
+- Ter o usuário/senha configurados no Postgres correspondentes aos que estão no arquivo `backend/database.py` e `build_db.py` (por padrão, os scripts tentam conectar em `postgres/postgres` ou com as suas credenciais locais).
+
+### 2. Configurando o Banco de Dados
+Abra o terminal na raiz do projeto e execute o script correspondente ao seu sistema operacional:
+- **Windows:** Dê dois cliques em `setup_banco.bat`
+- **Mac / Linux:** Execute `bash setup_banco.sh`
+
+Este script irá automaticamente conectar ao PostgreSQL da sua máquina, limpar as tabelas antigas e recriar toda a estrutura do banco (tabelas, views, triggers e funções) e já inserir dados de teste para você.
+
+### 3. Iniciando a Aplicação
+Abra o terminal na raiz do projeto e execute:
+- **Windows:** Dê dois cliques em `iniciar_sistema.bat`
+- **Mac / Linux:** Execute `bash iniciar_sistema.sh`
+
+O que este script faz magicamente:
+1. Cria o ambiente virtual (`.venv`) isolado do seu sistema.
+2. Baixa e instala todas as bibliotecas necessárias para o projeto funcionar (`FastAPI`, `psycopg2`, etc).
+3. Liga o servidor do Backend na porta `8000`.
+
+**Tudo pronto!** Com aquela janela do terminal (servidor) aberta, basta ir na pasta `frontend/` e abrir o arquivo `index.html` em qualquer navegador (Chrome, Edge, Safari, etc.) para utilizar o sistema.
+
+---
+
 ## Estrutura do Banco de Dados
 
 O banco foi projetado seguindo os princípios de normalização até a Terceira Forma Normal (3FN).
