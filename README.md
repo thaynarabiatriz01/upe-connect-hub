@@ -22,7 +22,18 @@ Conectando Talentos, Oportunidades e Desenvolvimento Acadêmico
 
 O **UPE Connect Hub** é uma plataforma acadêmica desenvolvida como projeto da disciplina de Banco de Dados da Universidade de Pernambuco (UPE).
 
-O sistema tem como objetivo centralizar a divulgação. O projeto consiste no desenvolvimento de um banco de dados relacional e uma interface simples para apoiar a gestão  de oportunidades acadêmicas e profissionais, permitindo que estudantes, professores, coordenação e empresas parceiras tenham acesso a um ambiente único para publicação e acompanhamento de vagas, eventos, bolsas, monitorias e projetos.
+O projeto consiste no desenvolvimento de um banco de dados relacional, acompanhado de uma interface simples para demonstração, com o objetivo de centralizar a divulgação e o gerenciamento de oportunidades acadêmicas e profissionais.
+
+A solução busca integrar estudantes, professores, coordenação e empresas parceiras em um único ambiente para publicação e acompanhamento de:
+
+- Estágios;
+- Monitorias;
+- Bolsas;
+- Projetos de pesquisa;
+- Projetos de extensão;
+- Eventos acadêmicos.
+
+Além disso, o sistema permite relacionar as competências dos usuários com os requisitos das oportunidades publicadas, facilitando a recomendação de vagas compatíveis com o perfil acadêmico e profissional de cada estudante.
 
 ---
 
@@ -114,6 +125,12 @@ UPE-Connect-Hub/
 ---
 
 ## Estrutura do Banco de Dados
+
+### Modelo DER (Diagrama de Entidade e Relacionamento)
+<h1>
+    <img src= "https://ik.imagekit.io/tntyaifd8/modelo%20DER%20(Diagrama%20de%20Entidade%20e%20Relacionamento)">
+<h1>
+
 
 O banco foi projetado seguindo os princípios de normalização até a Terceira Forma Normal (3FN).
 
@@ -237,6 +254,84 @@ Total aproximado: **26 tabelas**
 
 ---
 
+## Como Executar o Projeto
+
+### 1. Clone o repositório
+
+```bash
+git clone https://github.com/thaynarabiatriz01/upe-connect-hub
+```
+
+### 2. Acesse a pasta do projeto
+
+```bash
+cd UPE-Connect-Hub
+```
+
+### 3. Crie o banco de dados
+
+Crie um banco de dados no PostgreSQL com o nome desejado.
+
+Exemplo:
+
+```sql
+CREATE DATABASE upe_connect_hub;
+```
+
+### 4. Execute os scripts SQL
+
+Execute os arquivos da pasta `sql/` na seguinte ordem:
+
+```text
+01_tabelas.sql
+02_relacionamentos.sql
+03_indices.sql
+04_inserts.sql
+05_views.sql
+06_functions.sql
+07_procedures.sql
+08_triggers.sql
+09_consultas.sql
+```
+
+### 5. Instale as dependências da aplicação de teste
+
+```bash
+pip install -r app_teste/requirements.txt
+```
+
+### 6. Configure a conexão com o banco de dados
+
+Edite o arquivo `app_teste/conexao.py` com as credenciais do seu ambiente:
+
+```python
+host = "localhost"
+database = "upe_connect_hub"
+user = "postgres"
+password = "sua_senha"
+port = "5432"
+```
+
+### 7. Execute a aplicação de teste
+
+```bash
+python app_teste/main.py
+```
+
+---
+
+## Interface de Demonstração
+
+O protótipo do front-end está disponível na branch `versao2`.
+
+Para acessá-lo, execute:
+
+```bash
+git checkout versao2
+```
+
+Após mudar de branch, abra o arquivo `index.html` no navegador ou execute o servidor local configurado no projeto.
+
 ## Testes
 
 O projeto possui uma aplicação simples em Python para validar o funcionamento do banco de dados, permitindo:
@@ -247,16 +342,15 @@ O projeto possui uma aplicação simples em Python para validar o funcionamento 
 * Consulta de relatórios;
 * Teste das procedures e triggers.
 
----
 
 ## Integrantes
 
-| Nome         | Responsabilidade              |
+| Nome         |   |
 | ------------ | ----------------------------- |
-| Integrante 1 | Requisitos e Documentação     |
-| Integrante 2 | Modelagem e Diagramas         |
-| Integrante 3 | Estrutura do Banco de Dados   |
-| Integrante 4 | Procedures, Triggers e Testes |
+| Thaynara Biatriz
+| Maria Luisa
+| Everton Vilela
+| Sarah Cavalcante
 
 ---
 
