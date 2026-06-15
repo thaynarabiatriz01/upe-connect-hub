@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from routers import auth, vagas, admin, docente, monitor, usuarios
+from routers import auth, vagas, admin, docente, monitor, usuarios, eventos, empresas
 
 app = FastAPI(title="API - UPE Connect Hub")
 
@@ -20,6 +20,8 @@ app.include_router(vagas.router, prefix="/vagas", tags=["Vagas"])
 app.include_router(admin.router, prefix="/admin", tags=["Administração"])
 app.include_router(docente.router, prefix="/docente", tags=["Docentes e Pesquisadores"])
 app.include_router(monitor.router, prefix="/monitor", tags=["Monitores"])
+app.include_router(eventos.router, prefix="/eventos", tags=["Eventos"])
+app.include_router(empresas.router, prefix="/empresas", tags=["Empresas"])
 
 @app.get("/")
 def read_root():

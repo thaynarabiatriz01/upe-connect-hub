@@ -164,7 +164,7 @@ BEGIN
     VALUES(
         TG_TABLE_NAME,
         TG_OP,
-        row_to_json(NEW)::TEXT
+        row_to_json(NEW)::JSONB
     );
 
     RETURN NEW;

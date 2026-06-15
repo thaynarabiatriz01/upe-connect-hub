@@ -6,25 +6,82 @@
     <title>Dashboard - UPE Connect Hub</title>
     <link rel="stylesheet" href="css/style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        .tab-btn.active { color: var(--upe-blue) !important; border-bottom: 2px solid var(--upe-blue) !important; background: #eff6ff !important; }
+        .vaga-tag { background: #f3f4f6; padding: 3px 8px; border-radius: 12px; font-size: 11px; color: #4b5563; display: inline-block; margin: 3px; }
+        .candidatura-card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border-left: 5px solid #3b82f6; }
+        .feedback-box { background: #fef3c7; border: 1px dashed #f59e0b; padding: 12px; border-radius: 8px; margin-top: 15px; font-size: 13px; color: #78350f; }
+        .notif-item { padding: 12px 16px; border-bottom: 1px solid #f3f4f6; font-size: 13px; transition: 0.2s; }
+        .notif-item:hover { background: #f9fafb; }
+        .notif-unread { background: #eff6ff; border-left: 3px solid #3b82f6; }
+    </style>
 </head>
 <body class="dashboard-body">
     <nav class="navbar">
         <div class="nav-brand"><span>UPE</span> Connect Hub</div>
-        <div class="nav-user">
-            <span id="user-name">Carregando...</span>
+        <div class="nav-user" style="display: flex; align-items: center;">
+            <span id="user-name" style="margin-right: 15px;">Carregando...</span>
+            
+            <!-- Central de Notificações -->
+            <div class="notif-bell-container" id="bell-container" style="position: relative; display: inline-block; margin-right: 20px; cursor: pointer; color: white;">
+                <span id="notif-bell" style="font-size: 18px;">🔔</span>
+                <span id="notif-count" style="display: none; position: absolute; top: -8px; right: -8px; background: #ef4444; color: white; border-radius: 50%; padding: 1px 5px; font-size: 9px; font-weight: bold; line-height: 1;">0</span>
+                <!-- Dropdown de Notificações -->
+                <div id="notif-dropdown" style="display: none; position: absolute; right: 0; top: 30px; width: 300px; background: white; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.15); border: 1px solid #e5e7eb; z-index: 1001; max-height: 350px; overflow-y: auto; color: black; text-align: left; font-family: sans-serif;">
+                    <div style="padding: 12px 16px; font-weight: bold; border-bottom: 1px solid #f3f4f6; color: #1e3a8a; font-size: 14px;">
+                        Notificações Recentes
+                    </div>
+                    <div id="notif-items" style="padding: 5px 0;">
+                        <p style="text-align: center; padding: 15px; color:#6b7280; font-size:12px;">Carregando...</p>
+                    </div>
+                </div>
+            </div>
+
+            <a href="eventos.html" class="btn-primary" style="margin-right: 15px; padding: 6px 12px; background: transparent; border: 1px solid white; text-decoration: none;">Eventos</a>
             <a href="perfil.html" class="btn-primary" style="margin-right: 15px; padding: 6px 12px; background: transparent; border: 1px solid white; text-decoration: none;">Meu Perfil</a>
             <button id="logout-btn" class="btn-logout">Sair</button>
         </div>
     </nav>
     <main class="dashboard-container">
         <header class="dashboard-header">
-            <h2>Vagas em Destaque</h2>
-            <p>Explore as oportunidades acadêmicas e profissionais abertas no momento.</p>
+            <h2>Portal do Estudante</h2>
+            <p>Monitore suas candidaturas, receba avisos e encontre novos projetos.</p>
         </header>
-        <div id="vagas-grid" class="vagas-grid">
-            <p class="loading-text">Consultando o banco de dados PostgreSQL...</p>
+
+        <div class="tabs" style="display: flex; gap: 15px; margin-bottom: 25px; border-bottom: 2px solid #e5e7eb; padding-bottom: 1px;">
+            <button class="tab-btn active" id="tab-btn-vagas" style="background: none; border: none; font-size: 15px; font-weight: 600; color: #6b7280; cursor: pointer; padding: 10px 15px; border-radius: 8px 8px 0 0; border-bottom: 2px solid transparent;" onclick="showTab('tab-vagas')">Vagas Abertas</button>
+            <button class="tab-btn" id="tab-btn-candidaturas" style="background: none; border: none; font-size: 15px; font-weight: 600; color: #6b7280; cursor: pointer; padding: 10px 15px; border-radius: 8px 8px 0 0; border-bottom: 2px solid transparent;" onclick="showTab('tab-candidaturas')">Minhas Candidaturas</button>
+        </div>
+
+        <div id="tab-vagas" class="tab-content">
+            <div id="vagas-grid" class="vagas-grid">
+                <p class="loading-text">Consultando o banco de dados PostgreSQL...</p>
+            </div>
+        </div>
+
+        <div id="tab-candidaturas" class="tab-content" style="display: none;">
+            <div id="candidaturas-lista" style="display: flex; flex-direction: column; gap: 15px;">
+                <p class="loading-text">Buscando candidaturas...</p>
+            </div>
         </div>
     </main>
+
+    <script>
+        function showTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.style.display = 'none');
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+            document.getElementById(tabId).style.display = 'block';
+            
+            if (tabId === 'tab-vagas') {
+                document.getElementById('tab-btn-vagas').classList.add('active');
+            } else {
+                document.getElementById('tab-btn-candidaturas').classList.add('active');
+                if (typeof carregarCandidaturas === 'function') {
+                    carregarCandidaturas();
+                }
+            }
+        }
+    </script>
     <script src="js/dashboard.js"></script>
 </body>
 </html>

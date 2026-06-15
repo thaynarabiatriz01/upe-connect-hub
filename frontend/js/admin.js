@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         return;
     }
 
-    document.getElementById('admin-name').textContent = `${userData.name} (ROOT)`;
+    document.getElementById('user-name').textContent = `${userData.name} (ROOT)`;
 
     document.getElementById('logout-btn').addEventListener('click', () => {
         localStorage.clear();
@@ -22,6 +22,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.getElementById('btn-vagas').addEventListener('click', () => carregarTabela('vagas'));
     document.getElementById('btn-candidaturas').addEventListener('click', () => carregarTabela('candidaturas'));
     document.getElementById('btn-eventos').addEventListener('click', () => carregarTabela('eventos'));
+    document.getElementById('btn-empresas').addEventListener('click', () => carregarTabela('empresas'));
 
     // Carrega dashboard principal e exibe aprovações pendentes por padrão
     await carregarDashboardAdmin(token);
@@ -121,6 +122,9 @@ async function carregarTabela(tipo) {
         } else if (tipo === 'eventos') {
             endpoint = '/admin/eventos_detalhes';
             renderFunc = renderEventos;
+        } else if (tipo === 'empresas') {
+            endpoint = '/empresas/';
+            renderFunc = renderEmpresas;
         }
 
         const response = await fetch(`${API_URL}${endpoint}`, {
@@ -356,5 +360,140 @@ window.aprovarUsuario = async function(id_usuario) {
         
     } catch (error) {
         alert("❌ Erro DB: " + error.message);
+    }
+};
+
+function renderEmpresas(dados) {
+    let html = `
+        <h3 style="margin-bottom: 20px; color: var(--upe-blue);">Gestão de Empresas Parceiras</h3>
+        <p style="font-size: 14px; color: #6b7280; margin-bottom: 25px;">
+            Cadastre novas empresas e seus respectivos representantes comerciais para disponibilização de vagas.
+        </p>
+
+        <!-- Formulário de Nova Empresa -->
+        <div style="background: #f9fafb; padding: 20px; border-radius: 12px; border: 1px solid #e5e7eb; margin-bottom: 30px; color: black; text-align: left;">
+            <h4 style="margin: 0 0 15px 0; color: #374151;">Cadastrar Nova Empresa</h4>
+            <form id="form-cadastrar-empresa" onsubmit="cadastrarEmpresaAdmin(event)" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                <div>
+                    <label style="font-size:12px; font-weight:600; color:#4b5563;">Razão Social</label>
+                    <input type="text" id="emp_razao" required style="width:100%; padding: 8px; border:1px solid #d1d5db; border-radius:6px; font-size:13px;">
+                </div>
+                <div>
+                    <label style="font-size:12px; font-weight:600; color:#4b5563;">Nome Fantasia</label>
+                    <input type="text" id="emp_nome" required style="width:100%; padding: 8px; border:1px solid #d1d5db; border-radius:6px; font-size:13px;">
+                </div>
+                <div>
+                    <label style="font-size:12px; font-weight:600; color:#4b5563;">CNPJ</label>
+                    <input type="text" id="emp_cnpj" required placeholder="00.000.000/0000-00" style="width:100%; padding: 8px; border:1px solid #d1d5db; border-radius:6px; font-size:13px;">
+                </div>
+                <div>
+                    <label style="font-size:12px; font-weight:600; color:#4b5563;">E-mail Corporativo</label>
+                    <input type="email" id="emp_email" required style="width:100%; padding: 8px; border:1px solid #d1d5db; border-radius:6px; font-size:13px;">
+                </div>
+                <div>
+                    <label style="font-size:12px; font-weight:600; color:#4b5563;">Telefone</label>
+                    <input type="text" id="emp_tel" required placeholder="(87) 99999-9999" style="width:100%; padding: 8px; border:1px solid #d1d5db; border-radius:6px; font-size:13px;">
+                </div>
+                <div>
+                    <label style="font-size:12px; font-weight:600; color:#4b5563;">Site (Opcional)</label>
+                    <input type="url" id="emp_site" placeholder="https://..." style="width:100%; padding: 8px; border:1px solid #d1d5db; border-radius:6px; font-size:13px;">
+                </div>
+                
+                <!-- Dados do Representante -->
+                <div style="grid-column: 1 / -1; margin-top: 10px; border-top: 1px solid #e5e7eb; padding-top: 15px;">
+                    <h5 style="margin: 0 0 10px 0; color: #4b5563; font-weight: bold;">Dados do Representante Legal</h5>
+                </div>
+                <div>
+                    <label style="font-size:12px; font-weight:600; color:#4b5563;">Nome Representante</label>
+                    <input type="text" id="rep_nome" required style="width:100%; padding: 8px; border:1px solid #d1d5db; border-radius:6px; font-size:13px;">
+                </div>
+                <div>
+                    <label style="font-size:12px; font-weight:600; color:#4b5563;">E-mail do Representante</label>
+                    <input type="email" id="rep_email" required style="width:100%; padding: 8px; border:1px solid #d1d5db; border-radius:6px; font-size:13px;">
+                </div>
+                <div>
+                    <label style="font-size:12px; font-weight:600; color:#4b5563;">Telefone do Representante</label>
+                    <input type="text" id="rep_tel" required style="width:100%; padding: 8px; border:1px solid #d1d5db; border-radius:6px; font-size:13px;">
+                </div>
+                <div>
+                    <label style="font-size:12px; font-weight:600; color:#4b5563;">Cargo do Representante</label>
+                    <input type="text" id="rep_cargo" required placeholder="Ex: Diretor de RH" style="width:100%; padding: 8px; border:1px solid #d1d5db; border-radius:6px; font-size:13px;">
+                </div>
+                
+                <div style="grid-column: 1 / -1; text-align: right; margin-top: 15px;">
+                    <button type="submit" class="btn-primary" style="width: 200px; background-color: #10b981;">Cadastrar Empresa</button>
+                </div>
+            </form>
+        </div>
+
+        <h4 style="margin-bottom: 15px; color: #374151;">Empresas Cadastradas</h4>
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nome Fantasia / Razão Social</th>
+                    <th>CNPJ</th>
+                    <th>E-mail</th>
+                    <th>Telefone</th>
+                    <th>Site</th>
+                </tr>
+            </thead>
+            <tbody>
+    `;
+
+    if (dados.length === 0) {
+        html += `<tr><td colspan="6" style="text-align: center;">Nenhuma empresa cadastrada.</td></tr>`;
+    } else {
+        dados.forEach(d => {
+            html += `<tr>
+                <td style="color:#6b7280;">#${d.id_empresa}</td>
+                <td><strong>${d.nome_empresa}</strong><br><span style="font-size:11px;color:#9ca3af;">${d.razao_social}</span></td>
+                <td>${d.cnpj}</td>
+                <td>${d.email}</td>
+                <td>${d.telefone}</td>
+                <td><a href="${d.site || '#'}" target="_blank" style="color: #3b82f6;">${d.site || 'N/A'}</a></td>
+            </tr>`;
+        });
+    }
+
+    return html + '</tbody></table>';
+}
+
+window.cadastrarEmpresaAdmin = async function(event) {
+    event.preventDefault();
+    const token = localStorage.getItem('upe_token');
+    
+    const payload = {
+        razao_social: document.getElementById('emp_razao').value,
+        nome_empresa: document.getElementById('emp_nome').value,
+        cnpj: document.getElementById('emp_cnpj').value,
+        email: document.getElementById('emp_email').value,
+        telefone: document.getElementById('emp_tel').value,
+        site: document.getElementById('emp_site').value || null,
+        nome_representante: document.getElementById('rep_nome').value,
+        email_representante: document.getElementById('rep_email').value,
+        telefone_representante: document.getElementById('rep_tel').value,
+        cargo_representante: document.getElementById('rep_cargo').value
+    };
+    
+    try {
+        const response = await fetch(`${API_URL}/empresas/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(payload)
+        });
+        
+        if (!response.ok) {
+            const err = await response.json();
+            throw new Error(err.detail || "Erro ao cadastrar empresa");
+        }
+        
+        alert("✅ Empresa e Representante cadastrados com sucesso!");
+        carregarTabela('empresas'); // Recarrega a tabela de empresas
+    } catch (err) {
+        alert("Erro: " + err.message);
     }
 };

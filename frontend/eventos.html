@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eventos - UPE Connect Hub</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        .tabs { display: flex; gap: 20px; margin-bottom: 20px; border-bottom: 2px solid #e5e7eb; padding-bottom: 10px; }
+        .tab-btn { background: none; border: none; font-size: 16px; font-weight: 600; color: #6b7280; cursor: pointer; padding: 10px 15px; border-radius: 8px; transition: 0.3s; }
+        .tab-btn.active { color: var(--upe-blue); background: #eff6ff; }
+        .tab-btn:hover { color: var(--upe-blue); }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .evento-card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 20px; border-left: 4px solid var(--upe-blue); }
+        .evento-card h3 { color: #1f2937; margin-bottom: 10px; }
+        .evento-meta { font-size: 14px; color: #6b7280; margin-bottom: 15px; display: flex; gap: 15px; flex-wrap: wrap; }
+        .evento-meta span { background: #f3f4f6; padding: 4px 10px; border-radius: 20px; }
+    </style>
+</head>
+<body class="dashboard-body">
+    <nav class="navbar">
+        <div class="nav-brand"><span>UPE</span> Connect Hub</div>
+        <div class="nav-user">
+            <span id="user-name">Carregando...</span>
+            <button id="btn-voltar" class="btn-primary" style="margin-right: 15px; padding: 6px 12px; background: transparent; border: 1px solid white; text-decoration: none;">Voltar ao Painel</button>
+            <button id="logout-btn" class="btn-logout" style="padding: 6px 12px;">Sair</button>
+        </div>
+    </nav>
+    <main class="dashboard-container" style="max-width: 900px;">
+        <header class="dashboard-header" style="text-align: left; margin-bottom: 30px;">
+            <h2>Módulo de Eventos e Monitorias</h2>
+            <p>Gerencie participações, inscreva-se em eventos e emita certificados acadêmicos.</p>
+        </header>
+
+        <div class="tabs">
+            <button class="tab-btn active" onclick="showTab('tab-proximos', this)">Próximos Eventos</button>
+            <button class="tab-btn" onclick="showTab('tab-meus', this)">Minhas Inscrições</button>
+            <button class="tab-btn" id="btn-tab-gestao" style="display: none;" onclick="showTab('tab-gestao', this)">Gestão Docente</button>
+        </div>
+
+        <!-- TAB: PRÓXIMOS EVENTOS -->
+        <div id="tab-proximos" class="tab-content active">
+            <div id="lista-eventos">
+                <p style="text-align: center; color: #6b7280; margin-top: 40px;">Carregando eventos...</p>
+            </div>
+        </div>
+
+        <!-- TAB: MINHAS INSCRIÇÕES -->
+        <div id="tab-meus" class="tab-content">
+            <div id="minhas-inscricoes-lista" style="display: flex; flex-direction: column; gap: 20px;">
+                <p style="text-align: center; color: #6b7280; margin-top: 40px;">Carregando suas inscrições...</p>
+            </div>
+        </div>
+
+        <!-- TAB: GESTÃO (DOCENTE) -->
+        <div id="tab-gestao" class="tab-content">
+            <div style="background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 30px;">
+                <h3 style="margin-bottom: 20px; color: var(--upe-blue);">Publicar Novo Evento</h3>
+                <form id="form-criar-evento" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <div style="grid-column: 1 / -1;">
+                        <label>Título do Evento / Monitoria</label>
+                        <input type="text" id="ev_titulo" style="width: 100%; padding: 12px; border: 1px solid #e5e7eb; border-radius: 10px; font-size: 14px; background: #f9fafb;" required>
+                    </div>
+                    <div style="grid-column: 1 / -1;">
+                        <label>Descrição Completa</label>
+                        <textarea id="ev_descricao" rows="4" style="width: 100%; padding: 12px; border: 1px solid #e5e7eb; border-radius: 10px; font-size: 14px; background: #f9fafb;" required></textarea>
+                    </div>
+                    <div>
+                        <label>Data de Início</label>
+                        <input type="datetime-local" id="ev_inicio" style="width: 100%; padding: 12px; border: 1px solid #e5e7eb; border-radius: 10px; font-size: 14px; background: #f9fafb;" required>
+                    </div>
+                    <div>
+                        <label>Data de Fim</label>
+                        <input type="datetime-local" id="ev_fim" style="width: 100%; padding: 12px; border: 1px solid #e5e7eb; border-radius: 10px; font-size: 14px; background: #f9fafb;" required>
+                    </div>
+                    <div>
+                        <label>Localização (Sala/Online)</label>
+                        <input type="text" id="ev_local" style="width: 100%; padding: 12px; border: 1px solid #e5e7eb; border-radius: 10px; font-size: 14px; background: #f9fafb;" required>
+                    </div>
+                    <div>
+                        <label>Vagas Disponíveis</label>
+                        <input type="text" id="ev_vagas" placeholder="Ex: 50 vagas, Ilimitado..." style="width: 100%; padding: 12px; border: 1px solid #e5e7eb; border-radius: 10px; font-size: 14px; background: #f9fafb;" required>
+                    </div>
+                    <div style="grid-column: 1 / -1;">
+                        <label>Carga Horária (em horas)</label>
+                        <input type="number" id="ev_carga" style="width: 100%; max-width: 200px; padding: 12px; border: 1px solid #e5e7eb; border-radius: 10px; font-size: 14px; background: #f9fafb;" required>
+                    </div>
+                    <div style="grid-column: 1 / -1; text-align: right; margin-top: 10px;">
+                        <button type="submit" class="btn-primary" style="width: 200px;">Publicar Evento</button>
+                    </div>
+                </form>
+            </div>
+            <div style="background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 30px;">
+                <h3 style="margin-bottom: 20px; color: var(--upe-blue);">Alocar Monitor à Equipe do Evento</h3>
+                <p style="color: #6b7280; margin-bottom: 20px;">Vincule um estudante à organização do evento. Isso garantirá um certificado diferenciado (de organização/monitoria).</p>
+                <form id="form-alocar-monitor" style="display: flex; gap: 15px; align-items: flex-end;">
+                    <div style="flex: 1;">
+                        <label>ID do Evento</label>
+                        <input type="number" id="eq_id_evento" placeholder="Ex: 1" style="width: 100%; padding: 12px; border: 1px solid #e5e7eb; border-radius: 10px; font-size: 14px; background: #f9fafb;" required>
+                    </div>
+                    <div style="flex: 2;">
+                        <label>E-mail do Aluno</label>
+                        <input type="email" id="eq_email" placeholder="aluno@upe.br" style="width: 100%; padding: 12px; border: 1px solid #e5e7eb; border-radius: 10px; font-size: 14px; background: #f9fafb;" required>
+                    </div>
+                    <div style="flex: 1;">
+                        <label>Papel</label>
+                        <select id="eq_papel" class="form-select" style="width: 100%; padding: 12px; border: 1px solid #e5e7eb; border-radius: 10px; font-size: 14px; background: #f9fafb;" required>
+                            <option value="">Selecione...</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn-primary" style="width: auto; padding: 0 30px; height: 42px;">Adicionar</button>
+                </form>
+            </div>
+            
+            <div style="background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+                <h3 style="margin-bottom: 20px; color: var(--upe-blue);">Geração de Certificados em Lote</h3>
+                <p style="color: #6b7280; margin-bottom: 20px;">Informe o ID do evento para processar a emissão dos certificados na tabela <code>certificados</code> para todos os alunos que possuírem presença confirmada na tabela <code>participacoes</code>.</p>
+                <div style="display: flex; gap: 15px;">
+                    <input type="number" id="ev_id_cert" placeholder="Digite o ID do Evento" style="width: 200px; padding: 12px; border: 1px solid #e5e7eb; border-radius: 10px; font-size: 14px; background: #f9fafb;">
+                    <button class="btn-primary" onclick="gerarCertificados()" style="width: auto; background-color: #F59E0B; padding: 0 30px;">Processar Certificados</button>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Modal Certificado -->
+    <div id="modal-certificado" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); align-items: center; justify-content: center; z-index: 1000; padding: 20px;">
+        <div style="background: #fffdf5; padding: 40px; border-radius: 8px; width: 100%; max-width: 650px; box-shadow: 0 15px 45px rgba(0,0,0,0.3); border: 12px double #1e3a8a; text-align: center; font-family: 'Georgia', serif; color: #1e3a8a; position: relative;">
+            <button onclick="document.getElementById('modal-certificado').style.display='none'" style="position: absolute; top: 10px; right: 15px; background: none; border: none; font-size: 24px; font-weight: bold; cursor: pointer; color: #ef4444;">&times;</button>
+            <h1 style="font-size: 30px; margin: 0 0 10px 0; font-family: 'Times New Roman', serif;">CERTIFICADO DE PARTICIPAÇÃO</h1>
+            <p style="font-size: 11px; letter-spacing: 2px; margin-bottom: 25px; color: #4b5563;">UNIVERSIDADE DE PERNAMBUCO (UPE)</p>
+            
+            <p style="font-size: 16px; line-height: 1.6; margin-bottom: 30px; color: #374151;">
+                Certificamos para os devidos fins de direito que o(a) estudante <br>
+                <strong id="cert-aluno-nome" style="font-size: 20px; color: #1e3a8a; text-decoration: underline;">Nome do Aluno</strong><br>
+                participou das atividades acadêmicas do evento / monitoria:<br>
+                <strong id="cert-evento-titulo" style="font-size: 18px; color: #1e3a8a;">Título do Evento</strong><br>
+                na qualidade de <span id="cert-papel" style="font-weight: bold;">Ouvinte</span>, cumprindo carga horária total de <br>
+                <strong id="cert-carga" style="font-size: 16px;">X horas</strong>.
+            </p>
+            
+            <div style="margin-top: 40px; display: flex; justify-content: space-between; align-items: flex-end; font-size: 11px; color: #4b5563;">
+                <div style="text-align: left;">
+                    Código de Validação:<br>
+                    <span id="cert-codigo" style="font-family: monospace; font-weight: bold; color: #111827;">UUID-AQUI</span>
+                </div>
+                <div style="text-align: right;">
+                    Emissão: <span id="cert-data-emissao">DD/MM/AAAA</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showTab(tabId, btn) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            btn.classList.add('active');
+        }
+    </script>
+    <script src="js/eventos.js"></script>
+</body>
+</html>

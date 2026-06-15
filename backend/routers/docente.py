@@ -24,6 +24,8 @@ def get_current_docente(authorization: str = Header(None)):
     except Exception:
         raise HTTPException(status_code=401, detail="Sessão expirada ou token adulterado.")
 
+from typing import List, Optional
+
 class VagaRequest(BaseModel):
     titulo: str
     descricao: str
@@ -31,6 +33,8 @@ class VagaRequest(BaseModel):
     quantidade_vagas: int
     id_tipo_vaga: int
     id_empresa: int
+    requisitos: Optional[List[str]] = []
+    habilidades: Optional[List[int]] = []
 
 @router.post("/vagas")
 def criar_vaga(req: VagaRequest, docente=Depends(get_current_docente)):
@@ -41,11 +45,40 @@ def criar_vaga(req: VagaRequest, docente=Depends(get_current_docente)):
             cursor.execute("CALL publicar_vaga(%s, %s, %s, %s, %s, %s)", 
                            (req.titulo, req.descricao, req.data_limite, req.id_empresa, req.id_tipo_vaga, docente['id']))
             
+            # Recupera o ID da vaga recém-criada
+            cursor.execute("""
+                SELECT id_vaga FROM vagas 
+                WHERE titulo = %s AND id_usuario = %s 
+                ORDER BY id_vaga DESC LIMIT 1
+            """, (req.titulo, docente['id']))
+            vaga_row = cursor.fetchone()
+            if not vaga_row:
+                raise Exception("Erro ao recuperar ID da vaga criada.")
+            id_vaga = vaga_row[0]
+
             # Se a quantidade for > 1, fazemos um update rápido
             if req.quantidade_vagas > 1:
-                cursor.execute("UPDATE vagas SET quantidade_vagas = %s WHERE titulo = %s AND id_empresa = %s", 
-                               (req.quantidade_vagas, req.titulo, req.id_empresa))
+                cursor.execute("UPDATE vagas SET quantidade_vagas = %s WHERE id_vaga = %s", 
+                               (req.quantidade_vagas, id_vaga))
             
+            # Insere requisitos
+            if req.requisitos:
+                for req_str in req.requisitos:
+                    if req_str.strip():
+                        cursor.execute("""
+                            INSERT INTO requisitos_vaga (descricao, id_vaga)
+                            VALUES (%s, %s)
+                        """, (req_str.strip(), id_vaga))
+            
+            # Insere habilidades da vaga
+            if req.habilidades:
+                for hab_id in req.habilidades:
+                    cursor.execute("""
+                        INSERT INTO vaga_habilidades (id_vaga, id_habilidade)
+                        VALUES (%s, %s)
+                        ON CONFLICT DO NOTHING
+                    """, (id_vaga, hab_id))
+
             conn.commit()
             return {"message": "Vaga publicada com sucesso!"}
     except Exception as e:
@@ -71,6 +104,19 @@ def listar_minhas_vagas(docente=Depends(get_current_docente)):
             for r in results:
                 if r['data_limite']:
                     r['data_limite'] = r['data_limite'].strftime('%Y-%m-%d')
+                
+                # Busca requisitos da vaga
+                cursor.execute("SELECT descricao FROM requisitos_vaga WHERE id_vaga = %s", (r['id_vaga'],))
+                r['requisitos'] = [x['descricao'] for x in cursor.fetchall()]
+
+                # Busca habilidades da vaga
+                cursor.execute("""
+                    SELECT h.id_habilidade, h.nome 
+                    FROM vaga_habilidades vh
+                    JOIN habilidades h ON vh.id_habilidade = h.id_habilidade
+                    WHERE vh.id_vaga = %s
+                """, (r['id_vaga'],))
+                r['habilidades'] = cursor.fetchall()
             return results
     finally:
         conn.close()
@@ -146,23 +192,62 @@ def listar_candidaturas_da_vaga(id_vaga: int, docente=Depends(get_current_docent
     finally:
         conn.close()
 
+class StatusCandidaturaRequest(BaseModel):
+    novo_status: int
+    comentario: Optional[str] = None
+
 @router.put("/candidaturas/{id_candidatura}/status")
-def atualizar_status_candidatura(id_candidatura: int, novo_status: int, docente=Depends(get_current_docente)):
+def atualizar_status_candidatura(id_candidatura: int, req: StatusCandidaturaRequest, docente=Depends(get_current_docente)):
     conn = get_db_connection()
     try:
         with conn.cursor() as cursor:
+            # Pega dados da candidatura e da vaga
+            cursor.execute("""
+                SELECT c.id_usuario, v.titulo 
+                FROM candidaturas c
+                JOIN vagas v ON c.id_vaga = v.id_vaga
+                WHERE c.id_candidatura = %s
+            """, (id_candidatura,))
+            cand_info = cursor.fetchone()
+            if not cand_info:
+                raise HTTPException(status_code=404, detail="Candidatura não encontrada.")
+            
+            id_usuario_aluno = cand_info[0]
+            titulo_vaga = cand_info[1]
+
+            # Atualiza status da candidatura
             cursor.execute("""
                 UPDATE candidaturas 
                 SET status_candidatura = %s 
                 WHERE id_candidatura = %s
                 RETURNING id_candidatura
-            """, (novo_status, id_candidatura))
+            """, (req.novo_status, id_candidatura))
             if not cursor.fetchone():
                 raise HTTPException(status_code=404, detail="Candidatura não encontrada.")
+            
+            # Se houver comentário, salva na tabela feedback_candidatura
+            if req.comentario and req.comentario.strip():
+                cursor.execute("""
+                    INSERT INTO feedback_candidatura (comentario, id_candidatura)
+                    VALUES (%s, %s)
+                """, (req.comentario.strip(), id_candidatura))
+            
+            # Cria a notificação para o aluno correspondente
+            status_desc = "Deferida (Aprovada)" if req.novo_status == 3 else ("Indeferida" if req.novo_status == 2 else "Em Análise")
+            notif_titulo = f"Atualização na Candidatura: {titulo_vaga}"
+            notif_msg = f"Sua candidatura na vaga '{titulo_vaga}' foi atualizada para '{status_desc}'."
+            if req.comentario and req.comentario.strip():
+                notif_msg += f" Feedback do docente: \"{req.comentario.strip()}\""
+                
+            cursor.execute("""
+                INSERT INTO notificacoes (id_usuario, titulo, mensagem)
+                VALUES (%s, %s, %s)
+            """, (id_usuario_aluno, notif_titulo, notif_msg))
+
             conn.commit()
-            return {"message": "Status atualizado com sucesso!"}
+            return {"message": "Status e feedback atualizados com sucesso!"}
     except Exception as e:
         conn.rollback()
-        raise HTTPException(status_code=400, detail="Erro ao atualizar: " + str(e))
+        raise HTTPException(status_code=400, detail="Erro ao atualizar status: " + str(e))
     finally:
         conn.close()

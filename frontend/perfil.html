@@ -80,6 +80,81 @@
                 <button type="submit" class="btn-primary" style="width: 200px;">Salvar Perfil</button>
             </div>
         </form>
+
+        <hr style="margin: 40px 0; border: none; border-top: 1px solid #e5e7eb;">
+
+        <!-- Seção de Habilidades -->
+        <h3 style="color: var(--upe-blue); margin-bottom: 15px;">Minhas Habilidades</h3>
+        <form id="form-habilidade" style="display: flex; gap: 15px; margin-bottom: 20px;">
+            <select id="hab_select" class="form-select" style="flex: 1;" required>
+                <option value="">Selecione a habilidade...</option>
+            </select>
+            <select id="hab_nivel" class="form-select" style="width: 200px;" required>
+                <option value="">Selecione o nível...</option>
+                <option value="Básico">Básico</option>
+                <option value="Intermediário">Intermediário</option>
+                <option value="Avançado">Avançado</option>
+            </select>
+            <button type="submit" class="btn-primary" style="background-color: #10B981; width: auto; padding: 0 20px;">Adicionar</button>
+        </form>
+        <table style="width: 100%; border-collapse: collapse; margin-bottom: 40px; text-align: left;">
+            <thead>
+                <tr style="border-bottom: 2px solid #e5e7eb;">
+                    <th style="padding: 10px;">Habilidade</th>
+                    <th style="padding: 10px;">Nível</th>
+                    <th style="padding: 10px; width: 80px; text-align: center;">Ação</th>
+                </tr>
+            </thead>
+            <tbody id="habilidades-tbody">
+                <tr><td colspan="3" style="text-align: center; padding: 15px; color: #6b7280;">Carregando...</td></tr>
+            </tbody>
+        </table>
+
+        <!-- Seção de Certificações -->
+        <h3 style="color: var(--upe-blue); margin-bottom: 15px;">Minhas Certificações</h3>
+        <form id="form-certificacao" style="display: flex; gap: 15px; margin-bottom: 20px;">
+            <select id="cert_select" class="form-select" style="flex: 1;" required>
+                <option value="">Selecione a certificação...</option>
+            </select>
+            <input type="date" id="cert_data" style="width: 200px; padding: 12px; border: 1px solid #e5e7eb; border-radius: 10px; font-size: 14px; background: #f9fafb;" required>
+            <button type="submit" class="btn-primary" style="background-color: #10B981; width: auto; padding: 0 20px;">Adicionar</button>
+        </form>
+        <table style="width: 100%; border-collapse: collapse; text-align: left;">
+            <thead>
+                <tr style="border-bottom: 2px solid #e5e7eb;">
+                    <th style="padding: 10px;">Certificação / Instituição</th>
+                    <th style="padding: 10px;">Data Conclusão</th>
+                    <th style="padding: 10px; width: 80px; text-align: center;">Ação</th>
+                </tr>
+            </thead>
+            <tbody id="certificacoes-tbody">
+                <tr><td colspan="3" style="text-align: center; padding: 15px; color: #6b7280;">Carregando...</td></tr>
+            </tbody>
+        </table>
+
+        <hr style="margin: 40px 0; border: none; border-top: 1px solid #e5e7eb;">
+
+        <!-- Seção de Áreas de Interesse -->
+        <h3 style="color: var(--upe-blue); margin-bottom: 15px;">Minhas Áreas de Interesse</h3>
+        <form id="form-area" style="display: flex; gap: 15px; margin-bottom: 20px;">
+            <select id="area_select" class="form-select" style="flex: 1;" required>
+                <option value="">Selecione a área de interesse...</option>
+            </select>
+            <button type="submit" class="btn-primary" style="background-color: #10B981; width: auto; padding: 0 20px;">Adicionar</button>
+        </form>
+        <table style="width: 100%; border-collapse: collapse; text-align: left; margin-bottom: 20px;">
+            <thead>
+                <tr style="border-bottom: 2px solid #e5e7eb;">
+                    <th style="padding: 10px;">Área de Interesse</th>
+                    <th style="padding: 10px;">Descrição</th>
+                    <th style="padding: 10px; width: 80px; text-align: center;">Ação</th>
+                </tr>
+            </thead>
+            <tbody id="areas-tbody">
+                <tr><td colspan="3" style="text-align: center; padding: 15px; color: #6b7280;">Carregando...</td></tr>
+            </tbody>
+        </table>
+
     </main>
 
     <script src="js/perfil.js"></script>

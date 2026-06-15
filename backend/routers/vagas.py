@@ -20,12 +20,30 @@ def listar_vagas():
             # Lê a view que preparamos para o sistema
             cursor.execute("SELECT * FROM vw_vagas_abertas")
             vagas = cursor.fetchall()
+            
+            for v in vagas:
+                # Busca requisitos da vaga
+                cursor.execute("SELECT descricao FROM requisitos_vaga WHERE id_vaga = %s", (v['id_vaga'],))
+                v['requisitos'] = [x['descricao'] for x in cursor.fetchall()]
+
+                # Busca habilidades da vaga
+                cursor.execute("""
+                    SELECT h.id_habilidade, h.nome 
+                    FROM vaga_habilidades vh
+                    JOIN habilidades h ON vh.id_habilidade = h.id_habilidade
+                    WHERE vh.id_vaga = %s
+                """, (v['id_vaga'],))
+                v['habilidades'] = cursor.fetchall()
+                
             return {"vagas": vagas}
     finally:
         conn.close()
 
 @router.post("/candidatar")
-def candidatar_vaga(req: CandidaturaRequest):
+def candidatar_vaga(req: CandidaturaRequest, user=Depends(get_current_user)):
+    if user.get("role") in ["Professor", "Coordenador", "Pesquisador", "Administrador"]:
+        raise HTTPException(status_code=403, detail="Apenas estudantes podem se candidatar a vagas.")
+        
     conn = get_db_connection()
     if not conn:
         raise HTTPException(status_code=500, detail="Erro de conexão")
@@ -33,7 +51,7 @@ def candidatar_vaga(req: CandidaturaRequest):
     try:
         with conn.cursor() as cursor:
             # Aciona a Procedure exata do seu PostgreSQL
-            cursor.execute("CALL sp_cadastrar_candidatura(%s, %s)", (req.id_usuario, req.id_vaga))
+            cursor.execute("CALL sp_cadastrar_candidatura(%s, %s)", (user["id"], req.id_vaga))
             conn.commit()
             return {"message": "Candidatura enviada com sucesso! O sistema registrou seu log."}
     except Exception as e:

@@ -45,6 +45,13 @@ async function carregarVagas() {
 function criarCardVaga(vaga) {
     const card = document.createElement('div');
     card.className = 'vaga-card glass-card';
+    
+    // Verifica papel do usuário atual
+    const userData = JSON.parse(localStorage.getItem('upe_user') || '{}');
+    const role = userData.role || '';
+    const proibidos = ["Professor", "Coordenador", "Pesquisador", "Administrador"];
+    const showButton = !proibidos.includes(role);
+    
     card.innerHTML = `
         <div class="vaga-header">
             <span class="vaga-tipo">${vaga.tipo_vaga}</span>
@@ -59,7 +66,7 @@ function criarCardVaga(vaga) {
             </div>
         </div>
         <div class="vaga-footer">
-            <button class="btn-primary btn-sm" onclick="candidatar(${vaga.id_vaga})">Candidatar-se</button>
+            ${showButton ? `<button class="btn-primary btn-sm" onclick="candidatar(${vaga.id_vaga})">Candidatar-se</button>` : `<span style="font-size: 12px; color: #6b7280; font-style: italic;">Você já está atuando como docente/admin</span>`}
         </div>
     `;
     return card;
@@ -100,3 +107,123 @@ async function candidatar(idVaga) {
         alert("⚠️ ATENÇÃO DO BANCO DE DADOS:\n" + error.message);
     }
 }
+
+// ----------------------------------------
+// Lógica de Notificações
+// ----------------------------------------
+
+document.addEventListener('DOMContentLoaded', () => {
+    const bellContainer = document.getElementById('bell-container');
+    const notifDropdown = document.getElementById('notif-dropdown');
+    
+    if (bellContainer && notifDropdown) {
+        bellContainer.addEventListener('click', (e) => {
+            // Previne propagação para que o clique fora funcione
+            e.stopPropagation();
+            if (notifDropdown.style.display === 'none' || notifDropdown.style.display === '') {
+                notifDropdown.style.display = 'block';
+                carregarNotificacoes();
+            } else {
+                notifDropdown.style.display = 'none';
+            }
+        });
+
+        // Fechar se clicar fora
+        document.addEventListener('click', (e) => {
+            if (!bellContainer.contains(e.target)) {
+                notifDropdown.style.display = 'none';
+            }
+        });
+    }
+    
+    // Carrega badge inicialmente
+    carregarNotificacoes(true);
+});
+
+async function carregarNotificacoes(silencioso = false) {
+    const token = localStorage.getItem('upe_token');
+    if (!token) return;
+    
+    const itemsDiv = document.getElementById('notif-items');
+    const countBadge = document.getElementById('notif-count');
+    
+    try {
+        const response = await fetch(`${API_URL}/usuarios/notificacoes`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        
+        if (response.status === 401) {
+            if (!silencioso) {
+                alert("Sessão expirada. Por favor, faça login novamente.");
+                localStorage.clear();
+                window.location.href = 'index.html';
+            }
+            return;
+        }
+        
+        if (!response.ok) {
+            if (!silencioso) itemsDiv.innerHTML = '<p style="text-align: center; padding: 15px; color:red; font-size:12px;">Erro ao carregar notificações.</p>';
+            return;
+        }
+        
+        const data = await response.json();
+        
+        // Conta as não lidas
+        const naoLidas = data.filter(n => !n.lida).length;
+        if (countBadge) {
+            if (naoLidas > 0) {
+                countBadge.textContent = naoLidas;
+                countBadge.style.display = 'inline-block';
+            } else {
+                countBadge.style.display = 'none';
+            }
+        }
+        
+        if (!silencioso && itemsDiv) {
+            itemsDiv.innerHTML = '';
+            if (data.length === 0) {
+                itemsDiv.innerHTML = '<p style="text-align: center; padding: 15px; color:#6b7280; font-size:12px;">Você não possui nenhuma notificação.</p>';
+                return;
+            }
+            
+            data.forEach(n => {
+                const item = document.createElement('div');
+                item.className = 'notif-item ' + (n.lida ? '' : 'notif-unread');
+                item.style.padding = '12px 16px';
+                item.style.borderBottom = '1px solid #f3f4f6';
+                item.style.cursor = 'pointer';
+                
+                item.innerHTML = `
+                    <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
+                        <strong style="color:#1e3a8a;">${n.titulo}</strong>
+                        <span style="font-size:10px; color:#9ca3af;">${n.data_criacao}</span>
+                    </div>
+                    <p style="margin:0; color:#4b5563;">${n.mensagem}</p>
+                `;
+                
+                item.addEventListener('click', async () => {
+                    if (!n.lida) {
+                        try {
+                            await fetch(`${API_URL}/usuarios/notificacoes/${n.id_notificacao}/ler`, {
+                                method: 'PUT',
+                                headers: { 'Authorization': `Bearer ${token}` }
+                            });
+                            // Atualiza a visualização
+                            carregarNotificacoes(true); // badge update
+                            item.classList.remove('notif-unread');
+                            n.lida = true;
+                        } catch (err) {}
+                    }
+                });
+                
+                itemsDiv.appendChild(item);
+            });
+        }
+        
+    } catch (error) {
+        if (!silencioso && itemsDiv) {
+            itemsDiv.innerHTML = '<p style="text-align: center; padding: 15px; color:red; font-size:12px;">Falha de comunicação.</p>';
+        }
+    }
+}
+

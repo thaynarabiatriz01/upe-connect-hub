@@ -17,6 +17,26 @@ document.addEventListener('DOMContentLoaded', async () => {
         window.location.href = 'index.html';
     });
 
+    // Carregar catálogo de habilidades para o select de criação de vagas
+    try {
+        const habResponse = await fetch(`${API_URL}/usuarios/todas_habilidades`);
+        if (habResponse.ok) {
+            const habilidades = await habResponse.json();
+            const select = document.getElementById('v_habilidades');
+            if (select) {
+                select.innerHTML = '';
+                habilidades.forEach(h => {
+                    const opt = document.createElement('option');
+                    opt.value = h.id_habilidade;
+                    opt.textContent = h.nome;
+                    select.appendChild(opt);
+                });
+            }
+        }
+    } catch (err) {
+        console.error("Erro ao carregar catálogo de habilidades", err);
+    }
+
     await carregarVagas(token);
 
     // Lógica do Modal de Nova Vaga
@@ -29,13 +49,19 @@ document.addEventListener('DOMContentLoaded', async () => {
             btn.textContent = "Publicando...";
             btn.disabled = true;
 
+            const selectedHabs = Array.from(document.getElementById('v_habilidades').selectedOptions).map(o => parseInt(o.value));
+            const reqText = document.getElementById('v_requisitos').value;
+            const reqs = reqText.split('\n').map(s => s.trim()).filter(s => s.length > 0);
+
             const payload = {
                 titulo: document.getElementById('v_titulo').value,
                 descricao: document.getElementById('v_descricao').value,
                 data_limite: document.getElementById('v_data_limite').value,
                 quantidade_vagas: parseInt(document.getElementById('v_qtd').value),
                 id_tipo_vaga: parseInt(document.getElementById('v_tipo').value),
-                id_empresa: parseInt(document.getElementById('v_empresa').value)
+                id_empresa: parseInt(document.getElementById('v_empresa').value),
+                habilidades: selectedHabs,
+                requisitos: reqs
             };
 
             try {
@@ -209,14 +235,30 @@ window.carregarCandidaturas = async function(id_vaga, token) {
 
 window.mudarStatus = async function(id_candidatura, novo_status, id_vaga) {
     const token = localStorage.getItem('upe_token');
+    const statusDesc = novo_status === 3 ? "Aprovar/Selecionar" : (novo_status === 2 ? "Entrevistar" : "Rejeitar");
+    const comentario = prompt(`Deseja adicionar uma justificativa/feedback para a decisão de ${statusDesc}? (Opcional)`);
+    
+    if (comentario === null) return; // Se clicou em cancelar no prompt, interrompe o fluxo.
+
     try {
-        const response = await fetch(`${API_URL}/docente/candidaturas/${id_candidatura}/status?novo_status=${novo_status}`, {
+        const response = await fetch(`${API_URL}/docente/candidaturas/${id_candidatura}/status`, {
             method: 'PUT',
-            headers: { 'Authorization': `Bearer ${token}` }
+            headers: { 
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}` 
+            },
+            body: JSON.stringify({
+                novo_status: novo_status,
+                comentario: comentario.trim() || null
+            })
         });
         
-        if (!response.ok) throw new Error("Erro ao atualizar status");
+        if (!response.ok) {
+            const err = await response.json();
+            throw new Error(err.detail || "Erro ao atualizar status");
+        }
         
+        alert("✅ Candidatura avaliada com sucesso!");
         carregarCandidaturas(id_vaga, token); // Atualiza a tabela na hora
     } catch(err) {
         alert("Erro: " + err.message);
